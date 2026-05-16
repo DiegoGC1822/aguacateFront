@@ -21,7 +21,7 @@ export default function ProgressBar({
         <View
           style={{
             position: "absolute",
-            width: `${percentage}%`,
+            width: `${percentage * 100}%`,
             height: "100%",
             backgroundColor: backgroundColor,
             borderRadius: 6,
@@ -31,7 +31,7 @@ export default function ProgressBar({
         <View
           style={{
             position: "absolute",
-            left: `${percentage}%`,
+            left: `${percentage * 100}%`,
             transform: [
               {
                 translateX: percentage < 10 ? 0 : -54,
@@ -49,7 +49,7 @@ export default function ProgressBar({
               fontWeight: "bold",
             }}
           >
-            {percentage}%
+            {Math.round(percentage * 100)}%
           </Text>
         </View>
       </View>

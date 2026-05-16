@@ -3,15 +3,14 @@ import { postPrediction } from "../services/predictionService";
 
 interface PredictionState {
   prediction: {
-    clase: string;
-    confianza: number;
-    imagen_url: string;
-    todas: {
-      Antracnosis: number;
-      "Roña / Sarna": number;
-      Sano: number;
+    confidence: number;
+    predicted_category_display: string;
+    raw_scores: {
+      saludable: number;
+      antracnosis: number;
+      pudricion: number;
     };
-    color: string;
+    error_message: string | null;
   } | null;
   loading: boolean;
   error: string | null;

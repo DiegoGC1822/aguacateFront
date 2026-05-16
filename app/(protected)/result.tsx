@@ -10,6 +10,13 @@ export default function AnalysisResult() {
   console.log("Resultado de la predicción:", prediction);
   console.log("Imagen analizada:", image);
 
+  const classColor: Record<string, string> = {
+    antracnosis: "#e74c3c",
+    pudricion: "#f39c12",
+    saludable: "#2ecc71",
+    error: "#95a5a6",
+  };
+
   return (
     <View
       style={{
@@ -17,6 +24,7 @@ export default function AnalysisResult() {
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#d7f4d7",
+        paddingLeft: 80,
       }}
     >
       <Text
@@ -33,7 +41,12 @@ export default function AnalysisResult() {
       {image && (
         <Image
           source={{ uri: image }}
-          style={{ width: 200, height: 200, borderRadius: 10, marginBottom: 20 }}
+          style={{
+            width: 200,
+            height: 200,
+            borderRadius: 10,
+            marginBottom: 20,
+          }}
         />
       )}
       <Text
@@ -58,16 +71,17 @@ export default function AnalysisResult() {
             style={{
               fontWeight: "bold",
               color: "black",
-              backgroundColor: prediction?.color || "#ccc",
+              backgroundColor:
+                classColor[prediction?.predicted_category_display || "error"],
               padding: 5,
               borderRadius: 20,
             }}
           >
-            {prediction?.clase}
+            {prediction?.predicted_category_display || "Error en la predicción"}
           </Text>
         </View>
         <Text style={{ color: "black" }}>
-          Confianza: {prediction?.confianza}%
+          Confianza: {Math.round((prediction?.confidence || 0) * 100)}%
         </Text>
       </View>
       <Text style={{ color: "black", marginBottom: 15, fontSize: 16 }}>
@@ -75,17 +89,17 @@ export default function AnalysisResult() {
       </Text>
       <Text style={{ fontWeight: "bold", color: "black" }}>Antracnosis</Text>
       <ProgressBar
-        percentage={prediction?.todas.Antracnosis || 0}
+        percentage={prediction?.raw_scores.antracnosis || 0}
         backgroundColor="#e74c3c"
       />
-      <Text style={{ fontWeight: "bold", color: "black" }}>Sarna</Text>
+      <Text style={{ fontWeight: "bold", color: "black" }}>Pudricion</Text>
       <ProgressBar
-        percentage={prediction?.todas["Roña / Sarna"] || 0}
+        percentage={prediction?.raw_scores.pudricion || 0}
         backgroundColor="#f39c12"
       />
-      <Text style={{ fontWeight: "bold", color: "black" }}>Sano</Text>
+      <Text style={{ fontWeight: "bold", color: "black" }}>Saludable</Text>
       <ProgressBar
-        percentage={prediction?.todas.Sano || 0}
+        percentage={prediction?.raw_scores.saludable || 0}
         backgroundColor="#2ecc71"
       />
     </View>

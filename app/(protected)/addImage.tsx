@@ -24,6 +24,7 @@ export default function ImageUploader() {
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#d7f4d7",
+        paddingLeft: 80,
       }}
     >
       <Text
@@ -60,7 +61,13 @@ export default function ImageUploader() {
             <Text style={{ textAlign: "center", color: "#333" }}>
               Haz clic para seleccionar una imagen
             </Text>
-            <Text style={{ color: "#37c534", fontWeight: "bold" }}>
+            <Text
+              style={{
+                color: "#37c534",
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
               JPG, JPEG o PNG — máx. 10 MB
             </Text>
           </View>

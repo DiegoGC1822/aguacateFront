@@ -9,15 +9,20 @@ import { Ionicons } from "@expo/vector-icons";
 import { TextInput, Button } from "react-native-paper";
 import { router } from "expo-router";
 import { useState } from "react";
+import { useAuth } from "../../store/useAuth";
+import { Image } from "react-native";
 
 export default function LoginScreen() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
 
-  const handleLogin = () => {
-    if (username === "sebas" && password === "123") {
+  const handleLogin = async () => {
+    try {
+      await login(email, password);
       router.push("/");
-    } else {
+    } catch (error) {
       alert("Credenciales incorrectas");
     }
   };
@@ -55,22 +60,11 @@ export default function LoginScreen() {
               borderTopLeftRadius: 10,
             }}
           >
-            <View
-              style={{
-                width: 64,
-                height: 64,
-                borderRadius: 32,
-                backgroundColor: "#d7f4d7",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 12,
-              }}
-            >
-              <Ionicons name="leaf" size={32} color="#2c7a2c" />
-            </View>
-            <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
-              AguacateAI
-            </Text>
+            <Image
+              source={require("../../assets/logo.png")}
+              style={{ width: 280, height: 50 }}
+            />
+
             <Text style={{ color: "white" }}>Detección de enfermedades</Text>
           </View>
 
@@ -87,11 +81,11 @@ export default function LoginScreen() {
               Inicia Sesión
             </Text>
             <TextInput
-              placeholder="Nombre de usuario"
+              placeholder="Email"
               placeholderTextColor="black"
               left={<TextInput.Icon icon="email" color="black" />}
               mode="outlined"
-              onChangeText={setUsername}
+              onChangeText={setEmail}
               outlineColor="#ccc"
               activeOutlineColor="#2c7a2c"
               textColor="black"
@@ -104,13 +98,19 @@ export default function LoginScreen() {
             <TextInput
               placeholder="Contraseña"
               placeholderTextColor="black"
-              secureTextEntry
+              secureTextEntry={!showPassword}
               left={<TextInput.Icon icon="lock" color="black" />}
               mode="outlined"
               onChangeText={setPassword}
               outlineColor="#ccc"
               activeOutlineColor="#2c7a2c"
               textColor="black"
+              right={
+                <TextInput.Icon
+                  icon={showPassword ? "eye-off" : "eye"}
+                  onPress={() => setShowPassword(!showPassword)}
+                />
+              }
               style={{
                 marginBottom: 10,
                 borderRadius: 5,
@@ -130,6 +130,17 @@ export default function LoginScreen() {
                 Iniciar Sesión
               </Text>
             </Button>
+            <Text
+              style={{ marginTop: 10, textAlign: "center", color: "black" }}
+            >
+              ¿No tienes una cuenta?{" "}
+              <Text
+                style={{ color: "#2c7a2c", fontWeight: "bold" }}
+                onPress={() => router.push("/register")}
+              >
+                Regístrate
+              </Text>
+            </Text>
           </View>
         </View>
       </ScrollView>

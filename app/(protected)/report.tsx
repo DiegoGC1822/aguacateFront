@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 
-export default function HistoryScreen() {
+export default function ReportScreen() {
   return (
     <View
       style={{
@@ -8,6 +8,7 @@ export default function HistoryScreen() {
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#d7f4d7",
+        paddingLeft: 80,
       }}
     >
       <Text
