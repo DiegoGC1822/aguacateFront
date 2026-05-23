@@ -12,6 +12,8 @@ import {
 interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
+  isHydrated: boolean;
+  setHydrated: () => void;
 
   login: (email: string, password: string) => Promise<void>;
 
@@ -31,6 +33,9 @@ export const useAuth = create<AuthState>()(
     (set) => ({
       token: null,
       isAuthenticated: false,
+      isHydrated: false,
+
+      setHydrated: () => set({ isHydrated: true }),
 
       login: async (email, password) => {
         const token = await loginService(email, password);
@@ -68,6 +73,9 @@ export const useAuth = create<AuthState>()(
     {
       name: "auth-storage",
       storage: createJSONStorage(() => AsyncStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated();
+      },
     },
   ),
 );

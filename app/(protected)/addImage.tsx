@@ -1,20 +1,18 @@
-import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Image } from "react-native";
 import { Text, Button } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { router } from "expo-router";
 import { usePrediction } from "../../store/usePrediction";
 import { useImageUpload } from "../../store/useImageUpload";
+import { router } from "expo-router";
 
 export default function ImageUploader() {
-  const { analyzeImage, loading } = usePrediction();
-  const { image, pickImage } = useImageUpload();
+  const { pickImage, takePhoto, image, resetImage } = useImageUpload();
+  const { analyzeImage } = usePrediction();
 
-  const handleAnalyze = async () => {
-    console.log("Analizando imagen:", image);
-    if (image) {
-      await analyzeImage(image);
-      router.push("/result");
-    }
+  const handleAnalyze = () => {
+    if (!image) return;
+    analyzeImage(image);
+    router.push("/result");
   };
 
   return (
@@ -38,79 +36,73 @@ export default function ImageUploader() {
       >
         Detección de Enfermedades en Aguacates
       </Text>
-      <Text
-        variant="headlineSmall"
-        style={{ color: "gray", marginBottom: 20, textAlign: "center" }}
-      >
-        Selecciona una imagen para analizar su contenido
-      </Text>
-      <TouchableOpacity style={styles.container} onPress={pickImage}>
-        {image ? (
-          <Image
-            source={{ uri: image }}
+      {image && (
+        <Image
+          source={{ uri: image }}
+          style={{
+            width: 200,
+            height: 200,
+            borderRadius: 10,
+            marginBottom: 20,
+          }}
+        />
+      )}
+      <View style={{ width: "80%" }}>
+        {image && (
+          <Button
+            mode="contained"
+            onPress={handleAnalyze}
             style={{
-              width: 200,
-              height: 200,
-              borderRadius: 10,
-              marginBottom: 10,
+              backgroundColor: "blue",
+              marginTop: 20,
             }}
-          />
-        ) : (
-          <View style={styles.placeholder}>
-            <Ionicons name="image-outline" size={32} color="#37c534" />
-            <Text style={{ textAlign: "center", color: "#333" }}>
-              Haz clic para seleccionar una imagen
-            </Text>
-            <Text
-              style={{
-                color: "#37c534",
-                fontWeight: "bold",
-                textAlign: "center",
-              }}
-            >
-              JPG, JPEG o PNG — máx. 10 MB
-            </Text>
-          </View>
+            icon={() => <Ionicons name="analytics" size={20} color="white" />}
+          >
+            <Text style={{ fontWeight: "bold", color: "white" }}>Analizar</Text>
+          </Button>
         )}
-      </TouchableOpacity>
-      <Button
-        mode="contained"
-        onPress={handleAnalyze}
-        disabled={!image || loading}
-        loading={loading}
-        style={{
-          backgroundColor: image ? "#37c534" : "#83f578",
-          marginTop: 20,
-          width: "80%",
-        }}
-        icon={() => <Ionicons name="camera" size={20} color="black" />}
-      >
-        <Text style={{ color: image ? "white" : "gray", fontWeight: "bold" }}>
-          Analizar Imagen
-        </Text>
-      </Button>
+        <Button
+          mode="contained"
+          onPress={pickImage}
+          style={{
+            backgroundColor: "#37c534",
+            marginTop: 20,
+          }}
+          icon={() => <Ionicons name="image" size={20} color="white" />}
+        >
+          <Text style={{ fontWeight: "bold", color: "white" }}>
+            Cargar Imagen
+          </Text>
+        </Button>
+        <Button
+          mode="contained"
+          onPress={takePhoto}
+          style={{
+            backgroundColor: "#37c534",
+            marginTop: 20,
+          }}
+          icon={() => <Ionicons name="camera" size={20} color="white" />}
+        >
+          <Text style={{ fontWeight: "bold", color: "white" }}>Tomar Foto</Text>
+        </Button>
+        {image && (
+          <Button
+            mode="contained"
+            onPress={resetImage}
+            style={{
+              backgroundColor: "red",
+              marginTop: 20,
+            }}
+            icon={() => (
+              <Ionicons name="close-circle" size={20} color="white" />
+            )}
+          >
+            <Text style={{ fontWeight: "bold", color: "white" }}>
+              Cancelar análisis
+            </Text>
+          </Button>
+        )}
+      </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: "90%",
-    borderWidth: 1.5,
-    borderColor: "#37c534",
-    borderStyle: "dashed",
-    borderRadius: 12,
-    backgroundColor: "#f0fdf0",
-    padding: 50,
-    alignItems: "center",
-  },
-  placeholder: {
-    alignItems: "center",
-    gap: 8,
-  },
-  image: {
-    width: "100%",
-    height: 200,
-    borderRadius: 10,
-  },
-});

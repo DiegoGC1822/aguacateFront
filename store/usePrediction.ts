@@ -1,17 +1,9 @@
 import { create } from "zustand";
 import { postPrediction } from "../services/predictionService";
+import { Prediction } from "../types";
 
 interface PredictionState {
-  prediction: {
-    confidence: number;
-    predicted_category_display: string;
-    raw_scores: {
-      saludable: number;
-      antracnosis: number;
-      pudricion: number;
-    };
-    error_message: string | null;
-  } | null;
+  prediction: Prediction | null;
   loading: boolean;
   error: string | null;
   analyzeImage: (ImageUri: string) => Promise<void>;

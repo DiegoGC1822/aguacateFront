@@ -42,6 +42,7 @@ export default function LoginScreen() {
         <View
           style={{
             width: "80%",
+            height: 500,
             backgroundColor: "white",
             borderRadius: 10,
             shadowColor: "#000",
@@ -58,6 +59,7 @@ export default function LoginScreen() {
               alignItems: "center",
               borderTopRightRadius: 10,
               borderTopLeftRadius: 10,
+              gap: 10,
             }}
           >
             <Image

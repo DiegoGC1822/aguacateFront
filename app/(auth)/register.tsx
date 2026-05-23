@@ -84,7 +84,7 @@ export default function RegisterScreen() {
               Regístrate
             </Text>
             <TextInput
-              placeholder="Correo electrónico"
+              placeholder="Email"
               placeholderTextColor="black"
               left={<TextInput.Icon icon="email" color="black" />}
               mode="outlined"
@@ -185,6 +185,17 @@ export default function RegisterScreen() {
                 Regístrate
               </Text>
             </Button>
+            <Text
+              style={{ marginTop: 10, textAlign: "center", color: "black" }}
+            >
+              ¿Ya tienes una cuenta?{" "}
+              <Text
+                style={{ color: "#2c7a2c", fontWeight: "bold" }}
+                onPress={() => router.push("/login")}
+              >
+                Inicia Sesión
+              </Text>
+            </Text>
           </View>
         </View>
       </ScrollView>

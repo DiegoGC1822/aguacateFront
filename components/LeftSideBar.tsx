@@ -85,14 +85,12 @@ export default function LeftSidebar() {
             <Text style={styles.text}>Historial</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.item}>
-            <Ionicons name="document-text" size={20} color="white" />
-            <Text style={styles.text}>Reporte</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.item} onPress={handleLogout}>
-            <Ionicons name="log-out" size={20} color="red" />
-            <Text style={[styles.text, { color: "red" }]}>Salir</Text>
+          <TouchableOpacity
+            style={[styles.item, { marginTop: 375 }]}
+            onPress={handleLogout}
+          >
+            <Ionicons name="log-out" size={20} color="white" />
+            <Text style={styles.text}>Salir</Text>
           </TouchableOpacity>
         </View>
       )}

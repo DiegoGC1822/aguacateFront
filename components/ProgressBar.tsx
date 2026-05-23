@@ -7,52 +7,46 @@ export default function ProgressBar({
   percentage: number;
   backgroundColor: string;
 }) {
+  const finalPercentage = Math.min(Math.max(percentage * 100, 0), 100);
+
   return (
-    <View style={{ width: "90%", marginVertical: 5 }}>
+    <View
+      style={{
+        height: 21,
+        backgroundColor: "#e0e0e0",
+        borderRadius: 6,
+        width: "80%",
+        marginBottom: 10,
+        flexDirection: "row",
+        gap: 5,
+        alignItems: "center",
+      }}
+    >
       <View
         style={{
-          width: "100%",
-          height: 20,
-          backgroundColor: "#e0e0e0",
+          width: `${finalPercentage}%`,
+          height: "100%",
+          backgroundColor: backgroundColor,
           borderRadius: 6,
-          position: "relative",
+          alignItems: "flex-end",
         }}
       >
-        <View
+        {finalPercentage >= 20 && (
+          <Text style={{ color: "white", fontWeight: "bold", paddingRight: 5 }}>
+            {parseFloat(finalPercentage.toFixed(2))}
+          </Text>
+        )}
+      </View>
+      {finalPercentage < 20 && (
+        <Text
           style={{
-            position: "absolute",
-            width: `${percentage * 100}%`,
-            height: "100%",
-            backgroundColor: backgroundColor,
-            borderRadius: 6,
-          }}
-        />
-
-        <View
-          style={{
-            position: "absolute",
-            left: `${percentage * 100}%`,
-            transform: [
-              {
-                translateX: percentage < 10 ? 0 : -54,
-              },
-            ],
-            height: "100%",
-            justifyContent: "center",
-            paddingLeft: 4,
+            color: "black",
+            fontWeight: "bold",
           }}
         >
-          <Text
-            style={{
-              color: "black",
-              fontSize: 12,
-              fontWeight: "bold",
-            }}
-          >
-            {Math.round(percentage * 100)}%
-          </Text>
-        </View>
-      </View>
+          {parseFloat(finalPercentage.toFixed(2))}%
+        </Text>
+      )}
     </View>
   );
 }
