@@ -8,7 +8,7 @@ import {
 import { TextInput, Button } from "react-native-paper";
 import { router } from "expo-router";
 import { useState } from "react";
-import { useAuth } from "../../store/useAuth";
+import { useAuth } from "../../presentation/viewmodel/useAuth";
 import { Image } from "react-native";
 
 export default function RegisterScreen() {
@@ -23,11 +23,9 @@ export default function RegisterScreen() {
   const { register } = useAuth();
 
   const handleRegister = async () => {
-    try {
-      await register(email, password, password2, firstName, lastName);
+    const success = await register(email, password, password2, firstName, lastName);
+    if (success) {
       router.push("/login");
-    } catch (error) {
-      alert("Error al registrarse. Por favor, intenta de nuevo.");
     }
   };
 

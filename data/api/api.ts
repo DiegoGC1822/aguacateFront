@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuth } from "../store/useAuth";
+import { useAuth } from "../../presentation/viewmodel/useAuth";
 
 const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL,

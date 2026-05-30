@@ -21,7 +21,7 @@ export const analysisHTML = async ({
   const antracnosis = Math.round(
     (prediction?.raw_scores.antracnosis || 0) * 100,
   );
-  const pudricion = Math.round((prediction?.raw_scores.pudricion || 0) * 100);
+  const pudricion = Math.round((prediction?.raw_scores.sarna || 0) * 100);
   const saludable = Math.round((prediction?.raw_scores.saludable || 0) * 100);
   const confianza = Math.round((prediction?.confidence || 0) * 100);
 

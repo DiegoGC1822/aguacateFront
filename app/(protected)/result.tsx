@@ -1,9 +1,9 @@
 import { View, Text, Image } from "react-native";
 import { Button } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
-import ProgressBar from "../../components/ProgressBar";
-import { usePrediction } from "../../store/usePrediction";
-import { useImageUpload } from "../../store/useImageUpload";
+import ProgressBar from "../../presentation/components/ProgressBar";
+import { usePrediction } from "../../presentation/viewmodel/usePrediction";
+import { useImageUpload } from "../../presentation/viewmodel/useImageUpload";
 import { router } from "expo-router";
 import { analysisHTML } from "../../templates/reportHtml";
 import * as Print from "expo-print";

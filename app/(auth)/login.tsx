@@ -9,7 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { TextInput, Button } from "react-native-paper";
 import { router } from "expo-router";
 import { useState } from "react";
-import { useAuth } from "../../store/useAuth";
+import { useAuth } from "../../presentation/viewmodel/useAuth";
 import { Image } from "react-native";
 
 export default function LoginScreen() {
@@ -19,11 +19,9 @@ export default function LoginScreen() {
   const { login } = useAuth();
 
   const handleLogin = async () => {
-    try {
-      await login(email, password);
-      router.push("/");
-    } catch (error) {
-      alert("Credenciales incorrectas");
+    const success = await login(email, password);
+    if (success) {
+      router.push("/home");
     }
   };
 

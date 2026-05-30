@@ -1,8 +1,8 @@
 import { View, Image } from "react-native";
 import { Text, Button } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { usePrediction } from "../../store/usePrediction";
-import { useImageUpload } from "../../store/useImageUpload";
+import { usePrediction } from "../../presentation/viewmodel/usePrediction";
+import { useImageUpload } from "../../presentation/viewmodel/useImageUpload";
 import { router } from "expo-router";
 
 export default function ImageUploader() {

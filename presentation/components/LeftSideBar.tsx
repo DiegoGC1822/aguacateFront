@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useAuth } from "../store/useAuth";
+import { useAuth } from "../viewmodel/useAuth";
 import { Image } from "react-native";
 
 export default function LeftSidebar() {
@@ -49,12 +49,12 @@ export default function LeftSidebar() {
       {/* Toggle */}
       {expanded ? (
         <Image
-          source={require("../assets/logo.png")}
+          source={require("../../assets/logo.png")}
           style={{ width: 150, height: 30, marginBottom: 20 }}
         />
       ) : (
         <Image
-          source={require("../assets/palta.png")}
+          source={require("../../assets/palta.png")}
           style={{ width: 30, height: 42, marginBottom: 20 }}
         />
       )}

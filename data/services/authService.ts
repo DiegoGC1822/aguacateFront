@@ -13,7 +13,7 @@ export const login = async (
 
     return response.data.access;
   } catch (error: any) {
-    console.log("Error during login:", error.response?.data);
+    console.log("Error during login:", error.message);
     throw error;
   }
 };
@@ -42,7 +42,7 @@ export const register = async (
     });
     return response.data;
   } catch (error: any) {
-    console.error("Error during registration:", error.response?.data);
+    console.error("Error during registration:", error.message);
     throw error;
   }
 };
@@ -51,7 +51,7 @@ export const logout = async () => {
   try {
     await AsyncStorage.removeItem("token");
   } catch (error: any) {
-    console.error("Error during logout:", error.response?.data);
+    console.error("Error during logout:", error.message);
     throw error;
   }
 };

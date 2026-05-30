@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { postPrediction } from "../services/predictionService";
-import { Prediction } from "../types";
+import { postPrediction } from "../../data/services/predictionService";
+import { Prediction } from "../../types";
 
 interface PredictionState {
   prediction: Prediction | null;
