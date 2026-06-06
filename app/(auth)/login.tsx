@@ -5,7 +5,6 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { TextInput, Button } from "react-native-paper";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -19,9 +18,15 @@ export default function LoginScreen() {
   const { login } = useAuth();
 
   const handleLogin = async () => {
-    const success = await login(email, password);
-    if (success) {
+    try {
+      await login(email, password);
       router.push("/home");
+    } catch (error: any) {
+      alert(
+        error.response?.data?.detail ||
+          error.message ||
+          "Error al iniciar sesión",
+      );
     }
   };
 

@@ -65,12 +65,12 @@ export default function LeftSidebar() {
       {/* MENU */}
       {expanded && (
         <View style={styles.options}>
-          <TouchableOpacity style={styles.item} onPress={() => go("/")}>
+          <TouchableOpacity style={styles.item} onPress={() => go("/home")}>
             <Ionicons name="home" size={20} color="white" />
             <Text style={styles.text}>Inicio</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.item}>
+          <TouchableOpacity style={styles.item} onPress={() => go("/profile")}>
             <Ionicons name="person" size={20} color="white" />
             <Text style={styles.text}>Perfil</Text>
           </TouchableOpacity>

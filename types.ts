@@ -8,3 +8,8 @@ export interface Prediction {
   };
   error_message: string | null;
 }
+
+export type authResponse = {
+  access: string;
+  refresh: string;
+};

@@ -23,8 +23,8 @@ export default function Index() {
   }
 
   if (isAuthenticated) {
-    return <Redirect href="/(protected)" />;
+    return <Redirect href="/(protected)/home" />;
+  } else {
+    return <Redirect href="/(auth)/login" />;
   }
-
-  return <Redirect href="/(auth)/login" />;
 }

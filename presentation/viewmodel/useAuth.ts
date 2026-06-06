@@ -2,17 +2,40 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { loginUseCase, registerUseCase } from "../../domain/authUseCase";
+import {
+  loginUseCase,
+  registerUseCase,
+  updateProfileUseCase,
+  changePasswordUseCase,
+} from "../../domain/authUseCase";
 
-import { logout as logoutService } from "../../data/services/authService";
+import {
+  getUserProfile,
+  logout as logoutService,
+} from "../../data/services/authService";
 
 interface AuthState {
   token: string | null;
+  tokenRefresh: string | null;
   isAuthenticated: boolean;
   isHydrated: boolean;
+  profile: {
+    email: string;
+    first_name: string;
+    last_name: string;
+  } | null;
   setHydrated: () => void;
 
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<void>;
+
+  getProfile: () => Promise<void>;
+
+  updateUserProfile: (first_name?: string, last_name?: string) => Promise<void>;
+
+  updatePassword: (
+    currentPassword: string,
+    newPassword: string,
+  ) => Promise<void>;
 
   register: (
     email: string,
@@ -20,7 +43,7 @@ interface AuthState {
     password2: string,
     first_name: string,
     last_name: string,
-  ) => Promise<boolean>;
+  ) => Promise<void>;
 
   logout: () => Promise<void>;
 }
@@ -29,25 +52,54 @@ export const useAuth = create<AuthState>()(
   persist(
     (set) => ({
       token: null,
+      tokenRefresh: null,
       isAuthenticated: false,
       isHydrated: false,
+      profile: null,
 
       setHydrated: () => set({ isHydrated: true }),
 
-      login: async (email, password): Promise<boolean> => {
+      login: async (email, password): Promise<void> => {
         try {
-          const token = await loginUseCase(email, password);
+          const { access, refresh } = await loginUseCase(email, password);
 
           set({
-            token,
+            token: access,
+            tokenRefresh: refresh,
             isAuthenticated: true,
           });
-
-          return true;
         } catch (error: any) {
-          console.error("Login error:", error);
-          alert(error.message);
-          return false;
+          throw error;
+        }
+      },
+
+      getProfile: async () => {
+        try {
+          const profile = await getUserProfile();
+          console.log("User profile:", profile);
+          set({ profile });
+        } catch (error: any) {
+          throw error;
+        }
+      },
+
+      updateUserProfile: async (first_name, last_name) => {
+        try {
+          const updatedProfile = await updateProfileUseCase(
+            first_name,
+            last_name,
+          );
+          set({ profile: updatedProfile });
+        } catch (error: any) {
+          throw error;
+        }
+      },
+
+      updatePassword: async (currentPassword, newPassword) => {
+        try {
+          await changePasswordUseCase(currentPassword, newPassword);
+        } catch (error: any) {
+          throw error;
         }
       },
 
@@ -60,11 +112,8 @@ export const useAuth = create<AuthState>()(
             first_name,
             last_name,
           );
-          alert("Registro exitoso. Ahora puedes iniciar sesión.");
-          return true;
         } catch (error: any) {
-          alert(error.message);
-          return false;
+          throw error;
         }
       },
 
@@ -73,7 +122,9 @@ export const useAuth = create<AuthState>()(
 
         set({
           token: null,
+          tokenRefresh: null,
           isAuthenticated: false,
+          profile: null,
         });
       },
     }),

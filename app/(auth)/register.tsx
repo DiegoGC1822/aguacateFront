@@ -23,9 +23,11 @@ export default function RegisterScreen() {
   const { register } = useAuth();
 
   const handleRegister = async () => {
-    const success = await register(email, password, password2, firstName, lastName);
-    if (success) {
+    try {
+      await register(email, password, password2, firstName, lastName);
       router.push("/login");
+    } catch (error: any) {
+      alert(error.message || "Error al registrarse");
     }
   };
 
