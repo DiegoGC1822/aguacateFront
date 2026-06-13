@@ -30,7 +30,7 @@ interface AuthState {
 
   getProfile: () => Promise<void>;
 
-  updateUserProfile: (first_name?: string, last_name?: string) => Promise<void>;
+  updateUserProfile: (first_name: string, last_name: string) => Promise<void>;
 
   updatePassword: (
     currentPassword: string,

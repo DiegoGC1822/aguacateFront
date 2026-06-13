@@ -46,20 +46,16 @@ export const registerUseCase = async (
 };
 
 export const updateProfileUseCase = async (
-  first_name?: string,
-  last_name?: string,
-  password?: string,
+  first_name: string,
+  last_name: string,
 ) => {
-  if (first_name !== undefined && !first_name.trim()) {
+  if (!first_name.trim()) {
     throw new Error("Ingrese su nombre");
   }
-  if (last_name !== undefined && !last_name.trim()) {
+  if (!last_name.trim()) {
     throw new Error("Ingrese su apellido");
   }
-  if (password !== undefined && !password.trim()) {
-    throw new Error("Ingrese una contraseña válida");
-  }
-  return await updateUserProfile(first_name, last_name, password);
+  return await updateUserProfile(first_name, last_name);
 };
 
 export const changePasswordUseCase = async (

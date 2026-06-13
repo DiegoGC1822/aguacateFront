@@ -33,9 +33,8 @@ export const getUserProfile = async () => {
 };
 
 export const updateUserProfile = async (
-  first_name?: string,
-  last_name?: string,
-  password?: string,
+  first_name: string,
+  last_name: string,
 ) => {
   try {
     const data: any = {};
@@ -46,10 +45,6 @@ export const updateUserProfile = async (
 
     if (last_name) {
       data.last_name = last_name;
-    }
-
-    if (password) {
-      data.password = password;
     }
 
     const response = await api.patch("/auth/profile/", data);

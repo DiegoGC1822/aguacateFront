@@ -65,28 +65,36 @@ export default function LeftSidebar() {
       {/* MENU */}
       {expanded && (
         <View style={styles.options}>
-          <TouchableOpacity style={styles.item} onPress={() => go("/home")}>
-            <Ionicons name="home" size={20} color="white" />
-            <Text style={styles.text}>Inicio</Text>
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity style={styles.item} onPress={() => go("/home")}>
+              <Ionicons name="home" size={20} color="white" />
+              <Text style={styles.text}>Inicio</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.item} onPress={() => go("/profile")}>
-            <Ionicons name="person" size={20} color="white" />
-            <Text style={styles.text}>Perfil</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.item}
+              onPress={() => go("/profile")}
+            >
+              <Ionicons name="person" size={20} color="white" />
+              <Text style={styles.text}>Perfil</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.item} onPress={() => go("/addImage")}>
-            <Ionicons name="camera" size={20} color="white" />
-            <Text style={styles.text}>Analizar Imagen</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.item}
+              onPress={() => go("/addImage")}
+            >
+              <Ionicons name="camera" size={20} color="white" />
+              <Text style={styles.text}>Analizar Imagen</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.item}>
-            <Ionicons name="list" size={20} color="white" />
-            <Text style={styles.text}>Historial</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.item}>
+              <Ionicons name="list" size={20} color="white" />
+              <Text style={styles.text}>Historial</Text>
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity
-            style={[styles.item, { marginTop: 375 }]}
+            style={[styles.item, { marginBottom: 50 }]}
             onPress={handleLogout}
           >
             <Ionicons name="log-out" size={20} color="white" />
@@ -124,6 +132,8 @@ const styles = StyleSheet.create({
   options: {
     width: "100%",
     paddingLeft: 10,
+    flex: 1,
+    justifyContent: "space-between",
   },
   item: {
     flexDirection: "row",

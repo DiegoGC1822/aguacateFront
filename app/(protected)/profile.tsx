@@ -14,10 +14,10 @@ export default function ProfileScreen() {
   const [edit, setEdit] = useState(false);
   const [changePassword, setChangePassword] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     try {
       console.log("Updating profile with:", { firstName, lastName });
-      updateUserProfile(firstName, lastName);
+      await updateUserProfile(firstName, lastName);
       setEdit(false);
       alert("Perfil actualizado correctamente");
     } catch (error: any) {
@@ -25,13 +25,13 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
     try {
       console.log("Changing password with:", {
         currentPassword: currentPassword,
         newPassword: newPassword,
       });
-      updatePassword(currentPassword, newPassword);
+      await updatePassword(currentPassword, newPassword);
       setChangePassword(false);
       alert("Contraseña cambiada correctamente");
     } catch (error: any) {
