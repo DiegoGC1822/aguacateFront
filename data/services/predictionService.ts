@@ -23,3 +23,13 @@ export const postPrediction = async (imageUri: string) => {
     throw error;
   }
 };
+
+export const getPredictions = async () => {
+  try {
+    const response = await api.get("/classifications/history/");
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener el historial de predicciones:", error);
+    throw error;
+  }
+};

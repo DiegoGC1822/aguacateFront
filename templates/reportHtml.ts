@@ -27,10 +27,28 @@ export const analysisHTML = async ({
 
   let imageSrc = "";
   if (image) {
-    const base64 = await FileSystem.readAsStringAsync(image, {
-      encoding: "base64",
-    });
-    imageSrc = `data:image/jpeg;base64,${base64}`;
+    const esRemota =
+      image.startsWith("http://") || image.startsWith("https://");
+
+    try {
+      if (esRemota) {
+        const fileUri = FileSystem.cacheDirectory + "temp_report_image.jpg";
+        await FileSystem.downloadAsync(image, fileUri);
+
+        const base64 = await FileSystem.readAsStringAsync(fileUri, {
+          encoding: "base64",
+        });
+        imageSrc = `data:image/jpeg;base64,${base64}`;
+      } else {
+        const base64 = await FileSystem.readAsStringAsync(image, {
+          encoding: "base64",
+        });
+        imageSrc = `data:image/jpeg;base64,${base64}`;
+      }
+    } catch (error) {
+      console.error("Error al cargar la imagen para el PDF:", error);
+      imageSrc = "";
+    }
   }
 
   const progressBar = (label: string, color: string, value: number) => `

@@ -87,7 +87,10 @@ export default function LeftSidebar() {
               <Text style={styles.text}>Analizar Imagen</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.item}>
+            <TouchableOpacity
+              style={styles.item}
+              onPress={() => go("/history")}
+            >
               <Ionicons name="list" size={20} color="white" />
               <Text style={styles.text}>Historial</Text>
             </TouchableOpacity>

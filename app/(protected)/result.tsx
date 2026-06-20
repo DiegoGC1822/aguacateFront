@@ -74,6 +74,22 @@ export default function AnalysisResult() {
     );
   }
 
+  if (prediction?.status === "failed") {
+    return (
+      <View>
+        <Text>El análisis falló: {prediction.error_message}</Text>
+      </View>
+    );
+  }
+
+  if (prediction?.status === "processing") {
+    return (
+      <View>
+        <Text>Tu análisis aún se está procesando...</Text>
+      </View>
+    );
+  }
+
   const classColor: Record<string, string> = {
     Antracnosis: "#e74c3c",
     Sarna: "#f39c12",
@@ -171,15 +187,15 @@ export default function AnalysisResult() {
         </View>
       </View>
       <ProgressBar
-        percentage={prediction?.raw_scores.antracnosis || 0}
+        percentage={prediction?.raw_scores?.antracnosis || 0}
         backgroundColor="#e74c3c"
       />
       <ProgressBar
-        percentage={prediction?.raw_scores.sarna || 0}
+        percentage={prediction?.raw_scores?.sarna || 0}
         backgroundColor="#f39c12"
       />
       <ProgressBar
-        percentage={prediction?.raw_scores.saludable || 0}
+        percentage={prediction?.raw_scores?.saludable || 0}
         backgroundColor="#2ecc71"
       />
       <Button
