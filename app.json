@@ -2,14 +2,14 @@
   "expo": {
     "name": "aguacateFront",
     "slug": "aguacateFront",
-    "scheme": "aguacateFront",
+    "scheme": "aguacatefront",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/paltaReal.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/paltaReal.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,15 +18,22 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/paltaReal.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.diegogc1822.aguacateFront"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/paltaReal.png"
     },
-    "plugins": ["expo-router"]
+    "plugins": ["expo-router", "expo-font"],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "dfc7c786-62dd-4285-a1f6-3fc5f66611bb"
+      }
+    }
   }
 }
