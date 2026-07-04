@@ -1,4 +1,4 @@
-import { loginUseCase } from "../../domain/UploadUseCase";
+import { loginUseCase } from "../../domain/loginUseCase";
 import { login } from "../../data/services/authService";
 
 // Mock del servicio de autenticación
@@ -6,13 +6,18 @@ jest.mock("../../data/services/authService", () => ({
   login: jest.fn(),
 }));
 
-describe("authUseCase - Casos de Uso de Autenticación", () => {
+describe("loginUseCase - Casos de Uso de Inicio de Sesión", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   test("debe lanzar error si el email está vacío", async () => {
     await expect(loginUseCase("", "123456")).rejects.toThrow("Ingrese email");
+    expect(login).not.toHaveBeenCalled();
+  });
+
+  test("debe lanzar error si la contraseña está vacía", async () => {
+    await expect(loginUseCase("test@test.com", "")).rejects.toThrow("Ingrese contraseña");
     expect(login).not.toHaveBeenCalled();
   });
 

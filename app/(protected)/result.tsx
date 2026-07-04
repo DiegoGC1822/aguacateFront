@@ -20,15 +20,15 @@ export default function AnalysisResult() {
 
   console.log(
     "Resultado de la predicción sarna:",
-    prediction?.raw_scores.sarna || null,
+    prediction?.raw_scores?.sarna || null,
   );
   console.log(
     "Resultado de la predicción antracnosis:",
-    prediction?.raw_scores.antracnosis || null,
+    prediction?.raw_scores?.antracnosis || null,
   );
   console.log(
     "Resultado de la predicción saludable:",
-    prediction?.raw_scores.saludable || null,
+    prediction?.raw_scores?.saludable || null,
   );
 
   console.log("Resultado de la predicción:", prediction);
@@ -76,16 +76,78 @@ export default function AnalysisResult() {
 
   if (prediction?.status === "failed") {
     return (
-      <View>
-        <Text>El análisis falló: {prediction.error_message}</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#d7f4d7",
+          paddingLeft: 80,
+        }}
+      >
+        <Text
+          style={{
+            fontWeight: "bold",
+            marginBottom: 10,
+            color: "black",
+            textAlign: "center",
+            fontSize: 40,
+          }}
+        >
+          Lo sentimos, no pudimos procesar tu imagen.
+        </Text>
       </View>
     );
   }
 
   if (prediction?.status === "processing") {
     return (
-      <View>
-        <Text>Tu análisis aún se está procesando...</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#d7f4d7",
+          paddingLeft: 80,
+        }}
+      >
+        <Text
+          style={{
+            fontWeight: "bold",
+            marginBottom: 10,
+            color: "black",
+            textAlign: "center",
+            fontSize: 40,
+          }}
+        >
+          Tu análisis está pendiente de procesamiento...
+        </Text>
+      </View>
+    );
+  }
+
+  if (prediction?.status === "pending") {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#d7f4d7",
+          paddingLeft: 80,
+        }}
+      >
+        <Text
+          style={{
+            fontWeight: "bold",
+            marginBottom: 10,
+            color: "black",
+            textAlign: "center",
+            fontSize: 40,
+          }}
+        >
+          Tu análisis se esta procesando...
+        </Text>
       </View>
     );
   }

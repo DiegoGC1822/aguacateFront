@@ -119,7 +119,6 @@ const FaqAccordionItem = ({ item }: { item: FaqItem }) => {
   );
 };
 
-// ─── Componente acordeón principal ───────────────────────────────────────────
 const FaqAccordion = ({ items }: { items: FaqItem[] }) => (
   <View>
     {items.map((item, index) => (
@@ -128,7 +127,6 @@ const FaqAccordion = ({ items }: { items: FaqItem[] }) => (
   </View>
 );
 
-// ─── Pantalla Home ────────────────────────────────────────────────────────────
 export default function HomeScreen() {
   const { profile, getProfile, isHydrated } = useAuth();
 
@@ -156,13 +154,11 @@ export default function HomeScreen() {
         paddingVertical: 32,
       }}
     >
-      {/* Saludo */}
       <Text
         style={{
           fontSize: 28,
           fontWeight: "bold",
           color: "#1a1a1a",
-          marginBottom: 4,
         }}
       >
         ¡Bienvenido, {profile?.first_name}!
@@ -171,7 +167,6 @@ export default function HomeScreen() {
         ¿Qué prefieres hacer hoy?
       </Text>
 
-      {/* FAQ */}
       <Text
         style={{
           fontSize: 18,

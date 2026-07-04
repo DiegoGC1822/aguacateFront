@@ -100,17 +100,21 @@ export default function ModalResult({
         <Text style={{ color: "black" }}>
           Confianza: {Math.round((prediction?.confidence || 0) * 100)}%
         </Text>
+        <Text style={{ color: "black" }}>Grado de Certeza:</Text>
         <ProgressBar
           percentage={prediction?.raw_scores.antracnosis || 0}
           backgroundColor="#e74c3c"
+          borderColor="#e74c3c"
         />
         <ProgressBar
           percentage={prediction?.raw_scores.sarna || 0}
           backgroundColor="#f39c12"
+          borderColor="#f39c12"
         />
         <ProgressBar
           percentage={prediction?.raw_scores.saludable || 0}
           backgroundColor="#2ecc71"
+          borderColor="#2ecc71"
         />
         <View style={{ flexDirection: "row", gap: 20 }}>
           <Text style={{ fontWeight: "bold", color: "#e74c3c" }}>

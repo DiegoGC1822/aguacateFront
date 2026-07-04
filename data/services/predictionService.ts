@@ -33,3 +33,13 @@ export const getPredictions = async () => {
     throw error;
   }
 };
+
+export const getPredictionById = async (id: number) => {
+  try {
+    const response = await api.get(`/classifications/${id}/`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al consultar la clasificación:", error);
+    throw error;
+  }
+};

@@ -2,6 +2,7 @@ import { create } from "zustand";
 import {
   postPrediction,
   getPredictions,
+  getPredictionById,
 } from "../../data/services/predictionService";
 import { PredictionResponse, History } from "../../types";
 
@@ -14,20 +15,37 @@ interface PredictionState {
   getHistory: () => Promise<void>;
 }
 
+let pollingInterval: ReturnType<typeof setInterval> | null = null;
+let pollingAttempts = 0;
+const MAX_ATTEMPTS = 10;
+const POLL_INTERVAL_MS = 3000;
+
+const isFinalStatus = (status: string) =>
+  status !== "pending" && status !== "processing";
+
 export const usePrediction = create<PredictionState>((set) => ({
   prediction: null,
   history: null,
   loading: false,
   error: null,
+
   analyzeImage: async (ImageUri: string) => {
-    set({ loading: true });
+    stopPolling();
+    set({ loading: true, error: null, prediction: null });
     try {
       const data = await postPrediction(ImageUri);
-      set({ prediction: data, loading: false, error: null });
+      set({ prediction: data });
+
+      if (isFinalStatus(data.status)) {
+        set({ loading: false });
+      } else {
+        startPolling(data.id, set);
+      }
     } catch (error) {
       set({ error: "Error al analizar la imagen", loading: false });
     }
   },
+
   getHistory: async () => {
     set({ loading: true });
     try {
@@ -41,3 +59,41 @@ export const usePrediction = create<PredictionState>((set) => ({
     }
   },
 }));
+
+function startPolling(
+  id: number,
+  set: (partial: Partial<PredictionState>) => void
+) {
+  pollingAttempts = 0;
+
+  pollingInterval = setInterval(async () => {
+    pollingAttempts += 1;
+
+    try {
+      const data = await getPredictionById(id);
+      set({ prediction: data });
+
+      if (isFinalStatus(data.status)) {
+        stopPolling();
+        set({ loading: false });
+      } else if (pollingAttempts >= MAX_ATTEMPTS) {
+        stopPolling();
+        set({
+          loading: false,
+          error: "El análisis está tardando demasiado. Intentá de nuevo.",
+        });
+      }
+    } catch (error) {
+      stopPolling();
+      set({ error: "Error al consultar el análisis", loading: false });
+    }
+  }, POLL_INTERVAL_MS);
+}
+
+function stopPolling() {
+  if (pollingInterval) {
+    clearInterval(pollingInterval);
+    pollingInterval = null;
+  }
+  pollingAttempts = 0;
+}
