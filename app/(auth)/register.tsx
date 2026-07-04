@@ -4,27 +4,38 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image,
 } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { router } from "expo-router";
 import { useState } from "react";
-import { useAuth } from "../../presentation/viewmodel/useAuth";
-import { Image } from "react-native";
+import { useRegisterForm } from "../../presentation/viewmodel/useRegisterForm";
+import { RuleRow } from "../../presentation/components/RuleRow";
+import { RulesPanel } from "../../presentation/components/RulesPanel";
 
 export default function RegisterScreen() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const {
+    email, setEmail,
+    password, setPassword,
+    password2, setPassword2,
+    firstName, setFirstName,
+    lastName, setLastName,
+    validation,
+    submit,
+  } = useRegisterForm();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
 
-  const { register } = useAuth();
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [password2Focused, setPassword2Focused] = useState(false);
+  const [firstNameFocused, setFirstNameFocused] = useState(false);
+  const [lastNameFocused, setLastNameFocused] = useState(false);
 
   const handleRegister = async () => {
     try {
-      await register(email, password, password2, firstName, lastName);
+      await submit();
       router.push("/login");
     } catch (error: any) {
       alert(error.message || "Error al registrarse");
@@ -71,7 +82,6 @@ export default function RegisterScreen() {
             <Text style={{ color: "white" }}>Detección de enfermedades</Text>
           </View>
 
-          {/* formulario */}
           <View style={{ padding: 20 }}>
             <Text
               style={{
@@ -83,36 +93,43 @@ export default function RegisterScreen() {
             >
               Regístrate
             </Text>
+
+            {/* Email */}
             <TextInput
               placeholder="Email"
-              placeholderTextColor="black"
-              left={<TextInput.Icon icon="email" color="black" />}
+              placeholderTextColor="#888"
+              left={<TextInput.Icon icon="email" color="#2c7a2c" />}
               mode="outlined"
+              value={email}
               onChangeText={setEmail}
+              onFocus={() => setEmailFocused(true)}
+              onBlur={() => setEmailFocused(false)}
               outlineColor="#ccc"
               activeOutlineColor="#2c7a2c"
               textColor="black"
-              style={{
-                marginBottom: 10,
-                borderRadius: 5,
-                backgroundColor: "white",
-              }}
+              style={{ marginBottom: 4, borderRadius: 5, backgroundColor: "white" }}
             />
+            {(emailFocused) && (
+              <RulesPanel>
+                <RuleRow ok={validation.email.hasValidFormat} label="Formato de email válido" />
+              </RulesPanel>
+            )}
+
+            {/* Password */}
             <TextInput
               placeholder="Contraseña"
-              placeholderTextColor="black"
+              placeholderTextColor="#888"
               secureTextEntry={!showPassword}
-              left={<TextInput.Icon icon="lock" color="black" />}
+              left={<TextInput.Icon icon="lock" color="#2c7a2c" />}
               mode="outlined"
+              value={password}
               onChangeText={setPassword}
+              onFocus={() => setPasswordFocused(true)}
+              onBlur={() => setPasswordFocused(false)}
               outlineColor="#ccc"
               activeOutlineColor="#2c7a2c"
               textColor="black"
-              style={{
-                marginBottom: 10,
-                borderRadius: 5,
-                backgroundColor: "white",
-              }}
+              style={{ marginBottom: 4, borderRadius: 5, backgroundColor: "white" }}
               right={
                 <TextInput.Icon
                   icon={showPassword ? "eye-off" : "eye"}
@@ -120,21 +137,29 @@ export default function RegisterScreen() {
                 />
               }
             />
+            {(passwordFocused) && (
+              <RulesPanel>
+                <RuleRow ok={validation.password.hasMinLength} label="Mínimo 8 caracteres" />
+                <RuleRow ok={validation.password.hasUppercase} label="Al menos una mayúscula" />
+                <RuleRow ok={validation.password.hasNumber} label="Al menos un número" />
+              </RulesPanel>
+            )}
+
+            {/* Confirmar Password */}
             <TextInput
               placeholder="Confirmar Contraseña"
-              placeholderTextColor="black"
+              placeholderTextColor="#888"
               secureTextEntry={!showPassword2}
-              left={<TextInput.Icon icon="lock" color="black" />}
+              left={<TextInput.Icon icon="lock" color="#2c7a2c" />}
               mode="outlined"
+              value={password2}
               onChangeText={setPassword2}
+              onFocus={() => setPassword2Focused(true)}
+              onBlur={() => setPassword2Focused(false)}
               outlineColor="#ccc"
               activeOutlineColor="#2c7a2c"
               textColor="black"
-              style={{
-                marginBottom: 10,
-                borderRadius: 5,
-                backgroundColor: "white",
-              }}
+              style={{ marginBottom: 4, borderRadius: 5, backgroundColor: "white" }}
               right={
                 <TextInput.Icon
                   icon={showPassword2 ? "eye-off" : "eye"}
@@ -142,52 +167,68 @@ export default function RegisterScreen() {
                 />
               }
             />
+            {(password2Focused) && (
+              <RulesPanel>
+                <RuleRow ok={validation.password.passwordsMatch} label="Las contraseñas coinciden" />
+              </RulesPanel>
+            )}
+
+            {/* Nombre */}
             <TextInput
               placeholder="Nombre"
-              placeholderTextColor="black"
-              left={<TextInput.Icon icon="account" color="black" />}
+              placeholderTextColor="#888"
+              left={<TextInput.Icon icon="account" color="#2c7a2c" />}
               mode="outlined"
+              value={firstName}
               onChangeText={setFirstName}
+              onFocus={() => setFirstNameFocused(true)}
+              onBlur={() => setFirstNameFocused(false)}
               outlineColor="#ccc"
               activeOutlineColor="#2c7a2c"
               textColor="black"
-              style={{
-                marginBottom: 10,
-                borderRadius: 5,
-                backgroundColor: "white",
-              }}
+              style={{ marginBottom: 4, borderRadius: 5, backgroundColor: "white" }}
             />
+            {(firstNameFocused) && (
+              <RulesPanel>
+                <RuleRow ok={validation.firstName.hasMinLength} label="Minimo 4 caracteres" />
+              </RulesPanel>
+            )}
+
+            {/* Apellido */}
             <TextInput
               placeholder="Apellido"
-              placeholderTextColor="black"
-              left={<TextInput.Icon icon="account" color="black" />}
+              placeholderTextColor="#888"
+              left={<TextInput.Icon icon="account" color="#2c7a2c" />}
               mode="outlined"
+              value={lastName}
               onChangeText={setLastName}
+              onFocus={() => setLastNameFocused(true)}
+              onBlur={() => setLastNameFocused(false)}
               outlineColor="#ccc"
               activeOutlineColor="#2c7a2c"
               textColor="black"
-              style={{
-                marginBottom: 10,
-                borderRadius: 5,
-                backgroundColor: "white",
-              }}
+              style={{ marginBottom: 4, borderRadius: 5, backgroundColor: "white" }}
             />
+            {(lastNameFocused) && (
+              <RulesPanel>
+                <RuleRow ok={validation.lastName.hasMinLength} label="Minimo 4 caracteres" />
+              </RulesPanel>
+            )}
+
             <Button
               mode="contained"
               style={{
-                backgroundColor: "#2c7a2c",
+                backgroundColor: validation.isFormValid ? "#2c7a2c" : "#a5c8a5",
                 marginTop: 10,
                 paddingVertical: 3,
               }}
               onPress={handleRegister}
+              disabled={!validation.isFormValid}
             >
-              <Text style={{ color: "white", fontWeight: "bold" }}>
-                Regístrate
-              </Text>
+              <Text style={{ color: "white", fontWeight: "bold" }}>Regístrate</Text>
             </Button>
-            <Text
-              style={{ marginTop: 10, textAlign: "center", color: "black" }}
-            >
+
+            <Text style={{ marginTop: 10, textAlign: "center", color: "black" }}>
               ¿Ya tienes una cuenta?{" "}
               <Text
                 style={{ color: "#2c7a2c", fontWeight: "bold" }}

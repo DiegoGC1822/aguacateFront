@@ -1,4 +1,4 @@
-import { loginUseCase } from "../../domain/authUseCase";
+import { loginUseCase } from "../../domain/UploadUseCase";
 import { login } from "../../data/services/authService";
 
 // Mock del servicio de autenticación

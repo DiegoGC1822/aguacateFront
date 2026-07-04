@@ -1,5 +1,5 @@
 import { useAuth } from "../../../presentation/viewmodel/useAuth";
-import { loginUseCase } from "../../../domain/authUseCase";
+import { loginUseCase } from "../../../domain/UploadUseCase";
 import { logout as logoutService } from "../../../data/services/authService";
 
 // Mock de casos de uso y servicios

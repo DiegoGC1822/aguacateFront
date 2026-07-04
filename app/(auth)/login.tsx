@@ -24,8 +24,8 @@ export default function LoginScreen() {
     } catch (error: any) {
       alert(
         error.response?.data?.detail ||
-          error.message ||
-          "Error al iniciar sesión",
+        error.message ||
+        "Error al iniciar sesión",
       );
     }
   };
@@ -88,7 +88,7 @@ export default function LoginScreen() {
             <TextInput
               placeholder="Email"
               placeholderTextColor="black"
-              left={<TextInput.Icon icon="email" color="black" />}
+              left={<TextInput.Icon icon="email" color="#2c7a2c" />}
               mode="outlined"
               onChangeText={setEmail}
               outlineColor="#ccc"
@@ -104,7 +104,7 @@ export default function LoginScreen() {
               placeholder="Contraseña"
               placeholderTextColor="black"
               secureTextEntry={!showPassword}
-              left={<TextInput.Icon icon="lock" color="black" />}
+              left={<TextInput.Icon icon="lock" color="#2c7a2c" />}
               mode="outlined"
               onChangeText={setPassword}
               outlineColor="#ccc"

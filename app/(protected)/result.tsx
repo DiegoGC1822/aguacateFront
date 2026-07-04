@@ -20,15 +20,15 @@ export default function AnalysisResult() {
 
   console.log(
     "Resultado de la predicción sarna:",
-    prediction?.raw_scores.sarna,
+    prediction?.raw_scores.sarna || null,
   );
   console.log(
     "Resultado de la predicción antracnosis:",
-    prediction?.raw_scores.antracnosis,
+    prediction?.raw_scores.antracnosis || null,
   );
   console.log(
     "Resultado de la predicción saludable:",
-    prediction?.raw_scores.saludable,
+    prediction?.raw_scores.saludable || null,
   );
 
   console.log("Resultado de la predicción:", prediction);
@@ -174,7 +174,7 @@ export default function AnalysisResult() {
           Confianza: {Math.round((prediction?.confidence || 0) * 100)}%
         </Text>
         <Text style={{ color: "black", fontSize: 16 }}>
-          Probabilidad por clase:
+          Grado de Certeza:
         </Text>
         <View style={{ flexDirection: "row", gap: 20 }}>
           <Text style={{ fontWeight: "bold", color: "#e74c3c" }}>
@@ -188,15 +188,18 @@ export default function AnalysisResult() {
       </View>
       <ProgressBar
         percentage={prediction?.raw_scores?.antracnosis || 0}
-        backgroundColor="#e74c3c"
+        backgroundColor="#F38D8D"
+        borderColor="#e74c3c"
       />
       <ProgressBar
         percentage={prediction?.raw_scores?.sarna || 0}
         backgroundColor="#f39c12"
+        borderColor="#f39c12"
       />
       <ProgressBar
         percentage={prediction?.raw_scores?.saludable || 0}
-        backgroundColor="#2ecc71"
+        backgroundColor="#8FF38D"
+        borderColor="#2ecc71"
       />
       <Button
         mode="contained"
@@ -222,7 +225,7 @@ export default function AnalysisResult() {
         )}
         onPress={finishAnalysis}
       >
-        <Text style={{ fontWeight: "bold" }}>Terminar analisis</Text>
+        <Text style={{ fontWeight: "bold" }}>Volver al inicio</Text>
       </Button>
     </View>
   );

@@ -1,23 +1,42 @@
-import { TextInput, Button } from "react-native-paper";
+import { TextInput, Button, Text } from "react-native-paper";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
-import { Text } from "react-native-paper";
 import { useAuth } from "../../presentation/viewmodel/useAuth";
+import { RuleRow } from "../../presentation/components/RuleRow";
+import { RulesPanel } from "../../presentation/components/RulesPanel";
+import { useUploadProfile } from "../../presentation/viewmodel/useUploadProfile";
+import { useUploadPassword } from "../../presentation/viewmodel/useUploadPassword";
 
 export default function ProfileScreen() {
-  const { profile, updateUserProfile, updatePassword } = useAuth();
-  const [firstName, setFirstName] = useState(profile?.first_name || "");
-  const [lastName, setLastName] = useState(profile?.last_name || "");
-  const [newPassword, setNewPassword] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
+  const { profile } = useAuth();
+
+  const {
+    firstName, setFirstName,
+    lastName, setLastName,
+    validation: profileValidation,
+    submit: submitProfile,
+  } = useUploadProfile();
+
+  const {
+    password, setPassword,
+    password2, setPassword2,
+    validation: passwordValidation,
+    submit: submitPassword,
+  } = useUploadPassword();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
   const [edit, setEdit] = useState(false);
   const [changePassword, setChangePassword] = useState(false);
 
+  const [firstNameFocused, setFirstNameFocused] = useState(false);
+  const [lastNameFocused, setLastNameFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [password2Focused, setPassword2Focused] = useState(false);
+
   const handleSave = async () => {
     try {
-      console.log("Updating profile with:", { firstName, lastName });
-      await updateUserProfile(firstName, lastName);
+      await submitProfile();
       setEdit(false);
       alert("Perfil actualizado correctamente");
     } catch (error: any) {
@@ -27,12 +46,10 @@ export default function ProfileScreen() {
 
   const handleChangePassword = async () => {
     try {
-      console.log("Changing password with:", {
-        currentPassword: currentPassword,
-        newPassword: newPassword,
-      });
-      await updatePassword(currentPassword, newPassword);
+      await submitPassword();
       setChangePassword(false);
+      setPassword("");
+      setPassword2("");
       alert("Contraseña cambiada correctamente");
     } catch (error: any) {
       alert(error.message || "Error al cambiar la contraseña");
@@ -41,14 +58,8 @@ export default function ProfileScreen() {
 
   const handleCancelPassword = () => {
     setChangePassword(false);
-    setNewPassword("");
-    setCurrentPassword("");
-  };
-
-  const handleCancelEdit = () => {
-    setEdit(false);
-    setFirstName(profile?.first_name || "");
-    setLastName(profile?.last_name || "");
+    setPassword("");
+    setPassword2("");
   };
 
   return (
@@ -76,31 +87,24 @@ export default function ProfileScreen() {
           <Text style={{ color: "black" }} variant="displaySmall">
             Perfil de usuario
           </Text>
-          <View
-            style={{
-              padding: 20,
-              width: "100%",
-              borderRadius: 10,
-            }}
-          >
+          <View style={{ padding: 20, width: "100%", borderRadius: 10 }}>
             {changePassword ? (
               <>
+                {/* Contraseña actual */}
                 <TextInput
                   placeholder="Actual contraseña"
                   placeholderTextColor="black"
                   secureTextEntry={!showPassword}
-                  value={currentPassword}
-                  onChangeText={setCurrentPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                  onFocus={() => setPasswordFocused(true)}
+                  onBlur={() => setPasswordFocused(false)}
                   left={<TextInput.Icon icon="lock" color="black" />}
                   mode="outlined"
                   outlineColor="#ccc"
                   activeOutlineColor="#2c7a2c"
                   textColor="black"
-                  style={{
-                    marginBottom: 10,
-                    borderRadius: 5,
-                    backgroundColor: "white",
-                  }}
+                  style={{ marginBottom: 4, borderRadius: 5, backgroundColor: "white" }}
                   right={
                     <TextInput.Icon
                       icon={showPassword ? "eye-off" : "eye"}
@@ -108,37 +112,51 @@ export default function ProfileScreen() {
                     />
                   }
                 />
+                {(passwordFocused) && (
+                  <RulesPanel>
+                    <RuleRow ok={passwordValidation.password.hasValue} label="Campo no vacio" />
+                  </RulesPanel>
+                )}
+
+                {/* Nueva contraseña */}
                 <TextInput
                   placeholder="Nueva contraseña"
                   placeholderTextColor="black"
-                  secureTextEntry={!showPassword}
-                  value={newPassword}
-                  onChangeText={setNewPassword}
+                  secureTextEntry={!showPassword2}
+                  value={password2}
+                  onChangeText={setPassword2}
+                  onFocus={() => setPassword2Focused(true)}
+                  onBlur={() => setPassword2Focused(false)}
                   left={<TextInput.Icon icon="lock" color="black" />}
                   mode="outlined"
                   outlineColor="#ccc"
                   activeOutlineColor="#2c7a2c"
                   textColor="black"
-                  style={{
-                    marginBottom: 10,
-                    borderRadius: 5,
-                    backgroundColor: "white",
-                  }}
+                  style={{ marginBottom: 4, borderRadius: 5, backgroundColor: "white" }}
                   right={
                     <TextInput.Icon
-                      icon={showPassword ? "eye-off" : "eye"}
-                      onPress={() => setShowPassword(!showPassword)}
+                      icon={showPassword2 ? "eye-off" : "eye"}
+                      onPress={() => setShowPassword2(!showPassword2)}
                     />
                   }
                 />
+                {(password2Focused) && (
+                  <RulesPanel>
+                    <RuleRow ok={passwordValidation.password2.hasMinLength} label="Mínimo 8 caracteres" />
+                    <RuleRow ok={passwordValidation.password2.hasUppercase} label="Al menos una mayúscula" />
+                    <RuleRow ok={passwordValidation.password2.hasNumber} label="Al menos un número" />
+                  </RulesPanel>
+                )}
+
                 <Button
                   mode="contained"
                   style={{
-                    backgroundColor: "#23fdce",
+                    backgroundColor: passwordValidation.isFormValid ? "#42e2ddff" : "#a5c8a5",
                     marginTop: 10,
                     paddingVertical: 3,
                   }}
                   onPress={handleChangePassword}
+                  disabled={!passwordValidation.isFormValid}
                   icon="lock-reset"
                 >
                   <Text style={{ color: "white", fontWeight: "bold" }}>
@@ -146,22 +164,18 @@ export default function ProfileScreen() {
                   </Text>
                 </Button>
                 <Button
-                  mode="contained"
-                  style={{
-                    backgroundColor: "red",
-                    marginTop: 10,
-                    paddingVertical: 3,
-                  }}
+                  mode={passwordValidation.isFormValid ? "contained" : "outlined"}
+                  style={{ borderColor: "red", marginTop: 10, paddingVertical: 3, backgroundColor: passwordValidation.isFormValid ? "#42e2ddff" : "none" }}
+                  textColor={passwordValidation.isFormValid ? "white" : "red"}
                   onPress={handleCancelPassword}
                   icon="close"
                 >
-                  <Text style={{ color: "white", fontWeight: "bold" }}>
-                    Cancelar
-                  </Text>
+                  Cancelar
                 </Button>
               </>
             ) : (
               <>
+                {/* Nombre */}
                 <TextInput
                   placeholder="Nombre"
                   placeholderTextColor="black"
@@ -169,16 +183,21 @@ export default function ProfileScreen() {
                   mode="outlined"
                   value={firstName}
                   onChangeText={setFirstName}
+                  onFocus={() => setFirstNameFocused(true)}
+                  onBlur={() => setFirstNameFocused(false)}
                   disabled={!edit}
                   outlineColor="#ccc"
                   activeOutlineColor="#2c7a2c"
                   textColor="black"
-                  style={{
-                    marginBottom: 10,
-                    borderRadius: 5,
-                    backgroundColor: "white",
-                  }}
+                  style={{ marginBottom: 4, borderRadius: 5, backgroundColor: "white" }}
                 />
+                {edit && (firstNameFocused) && (
+                  <RulesPanel>
+                    <RuleRow ok={profileValidation.firstName.hasMinLength} label="Mínimo 4 caracteres" />
+                  </RulesPanel>
+                )}
+
+                {/* Apellido */}
                 <TextInput
                   placeholder="Apellido"
                   placeholderTextColor="black"
@@ -186,24 +205,31 @@ export default function ProfileScreen() {
                   mode="outlined"
                   value={lastName}
                   onChangeText={setLastName}
+                  onFocus={() => setLastNameFocused(true)}
+                  onBlur={() => setLastNameFocused(false)}
                   disabled={!edit}
                   outlineColor="#ccc"
                   activeOutlineColor="#2c7a2c"
                   textColor="black"
-                  style={{
-                    marginBottom: 10,
-                    borderRadius: 5,
-                    backgroundColor: "white",
-                  }}
+                  style={{ marginBottom: 4, borderRadius: 5, backgroundColor: "white" }}
                 />
+                {edit && (lastNameFocused) && (
+                  <RulesPanel>
+                    <RuleRow ok={profileValidation.lastName.hasMinLength} label="Mínimo 4 caracteres" />
+                  </RulesPanel>
+                )}
+
                 <Button
                   mode="contained"
                   style={{
-                    backgroundColor: edit ? "green" : "#2196F3",
+                    backgroundColor: edit
+                      ? profileValidation.isFormValid ? "green" : "#a5c8a5"
+                      : "#2196F3",
                     marginTop: 10,
                     paddingVertical: 3,
                   }}
-                  onPress={edit ? handleSave : () => setEdit(!edit)}
+                  onPress={edit ? handleSave : () => setEdit(true)}
+                  disabled={edit && !profileValidation.isFormValid}
                   icon={edit ? "content-save" : "pencil"}
                 >
                   <Text style={{ color: "white", fontWeight: "bold" }}>
@@ -212,27 +238,18 @@ export default function ProfileScreen() {
                 </Button>
                 {edit && (
                   <Button
-                    mode="contained"
-                    style={{
-                      backgroundColor: "red",
-                      marginTop: 10,
-                      paddingVertical: 3,
-                    }}
-                    onPress={handleCancelEdit}
+                    mode="outlined"
+                    style={{ borderColor: "red", marginTop: 10, paddingVertical: 3 }}
+                    textColor="red"
+                    onPress={() => setEdit(false)}
                     icon="close"
                   >
-                    <Text style={{ color: "white", fontWeight: "bold" }}>
-                      Cancelar
-                    </Text>
+                    Cancelar
                   </Button>
                 )}
                 <Button
                   mode="contained"
-                  style={{
-                    backgroundColor: "#23fdce",
-                    marginTop: 10,
-                    paddingVertical: 3,
-                  }}
+                  style={{ backgroundColor: "#42e2ddff", marginTop: 10, paddingVertical: 3 }}
                   onPress={() => setChangePassword(true)}
                   icon="lock-reset"
                 >

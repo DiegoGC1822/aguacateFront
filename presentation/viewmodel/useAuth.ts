@@ -3,11 +3,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import {
-  loginUseCase,
-  registerUseCase,
-  updateProfileUseCase,
-  changePasswordUseCase,
-} from "../../domain/authUseCase";
+  loginUseCase
+} from "../../domain/loginUseCase";
 
 import {
   getUserProfile,
@@ -29,21 +26,6 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
 
   getProfile: () => Promise<void>;
-
-  updateUserProfile: (first_name: string, last_name: string) => Promise<void>;
-
-  updatePassword: (
-    currentPassword: string,
-    newPassword: string,
-  ) => Promise<void>;
-
-  register: (
-    email: string,
-    password: string,
-    password2: string,
-    first_name: string,
-    last_name: string,
-  ) => Promise<void>;
 
   logout: () => Promise<void>;
 }
@@ -78,40 +60,6 @@ export const useAuth = create<AuthState>()(
           const profile = await getUserProfile();
           console.log("User profile:", profile);
           set({ profile });
-        } catch (error: any) {
-          throw error;
-        }
-      },
-
-      updateUserProfile: async (first_name, last_name) => {
-        try {
-          const updatedProfile = await updateProfileUseCase(
-            first_name,
-            last_name,
-          );
-          set({ profile: updatedProfile });
-        } catch (error: any) {
-          throw error;
-        }
-      },
-
-      updatePassword: async (currentPassword, newPassword) => {
-        try {
-          await changePasswordUseCase(currentPassword, newPassword);
-        } catch (error: any) {
-          throw error;
-        }
-      },
-
-      register: async (email, password, password2, first_name, last_name) => {
-        try {
-          await registerUseCase(
-            email,
-            password,
-            password2,
-            first_name,
-            last_name,
-          );
         } catch (error: any) {
           throw error;
         }

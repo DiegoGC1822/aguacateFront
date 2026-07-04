@@ -1,13 +1,38 @@
-import { View, Image } from "react-native";
-import { Text, Button } from "react-native-paper";
+import { View, Image, Modal, TouchableOpacity, Text } from "react-native";
+import { Button } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { usePrediction } from "../../presentation/viewmodel/usePrediction";
 import { useImageUpload } from "../../presentation/viewmodel/useImageUpload";
 import { router } from "expo-router";
+import { useState } from "react";
+
+// ─── Sub-componente fila de guía ──────────────────────────────────────────────
+const GuideRow = ({
+  icon,
+  text,
+}: {
+  icon: React.ComponentProps<typeof Ionicons>["name"];
+  text: string;
+}) => (
+  <View
+    style={{
+      flexDirection: "row",
+      alignItems: "flex-start",
+      marginBottom: 12,
+      gap: 10,
+    }}
+  >
+    <Ionicons name={icon} size={22} color="#2c7a2c" style={{ marginTop: 1 }} />
+    <Text style={{ flex: 1, fontSize: 14, color: "#333", lineHeight: 20 }}>
+      {text}
+    </Text>
+  </View>
+);
 
 export default function ImageUploader() {
   const { pickImage, takePhoto, image, resetImage } = useImageUpload();
   const { analyzeImage } = usePrediction();
+  const [showGuide, setShowGuide] = useState(false);
 
   const handleAnalyze = () => {
     if (!image) return;
@@ -25,9 +50,81 @@ export default function ImageUploader() {
         paddingLeft: 80,
       }}
     >
+      {/* Botón de ayuda */}
+      <TouchableOpacity
+        onPress={() => setShowGuide(true)}
+        style={{ position: "absolute", top: 16, right: 16, zIndex: 10 }}
+        accessibilityLabel="Abrir guía de captura"
+      >
+        <Ionicons name="help-circle-outline" size={32} color="#2c7a2c" />
+      </TouchableOpacity>
+
+      {/* Modal de guía de captura */}
+      <Modal
+        visible={showGuide}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowGuide(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 24,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              borderRadius: 16,
+              padding: 24,
+              width: "100%",
+              maxWidth: 360,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "bold",
+                color: "#1a1a1a",
+                marginBottom: 16,
+              }}
+            >
+              📷 Cómo tomar una buena foto
+            </Text>
+            <GuideRow
+              icon="sunny-outline"
+              text="Usa luz natural — evita sombras directas y flash"
+            />
+            <GuideRow
+              icon="scan-outline"
+              text="Distancia recomendada: 15 – 25 cm del fruto"
+            />
+            <GuideRow
+              icon="aperture-outline"
+              text="Asegúrate de que el aguacate esté en foco y centrado"
+            />
+            <GuideRow
+              icon="color-filter-outline"
+              text="Usa un fondo uniforme (mesa, suelo o tela de un solo color)"
+            />
+            <Button
+              mode="contained"
+              style={{ backgroundColor: "#2c7a2c", marginTop: 8 }}
+              onPress={() => setShowGuide(false)}
+            >
+              Entendido
+            </Button>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Título */}
       <Text
-        variant="displaySmall"
         style={{
+          fontSize: 22,
           fontWeight: "bold",
           marginBottom: 10,
           color: "black",
@@ -36,6 +133,7 @@ export default function ImageUploader() {
       >
         Detección de Enfermedades en Aguacates
       </Text>
+
       {image && (
         <Image
           source={{ uri: image }}
@@ -47,27 +145,25 @@ export default function ImageUploader() {
           }}
         />
       )}
+
       <View style={{ width: "80%" }}>
+        {/* Botón primario: Analizar (solo visible si hay imagen) */}
         {image && (
           <Button
             mode="contained"
             onPress={handleAnalyze}
-            style={{
-              backgroundColor: "blue",
-              marginTop: 20,
-            }}
+            style={{ backgroundColor: "#2c7a2c", marginTop: 20 }}
             icon={() => <Ionicons name="analytics" size={20} color="white" />}
           >
             <Text style={{ fontWeight: "bold", color: "white" }}>Analizar</Text>
           </Button>
         )}
+
+        {/* Botones secundarios */}
         <Button
           mode="contained"
           onPress={pickImage}
-          style={{
-            backgroundColor: "#37c534",
-            marginTop: 20,
-          }}
+          style={{ backgroundColor: "#37c534", marginTop: 20 }}
           icon={() => <Ionicons name="image" size={20} color="white" />}
         >
           <Text style={{ fontWeight: "bold", color: "white" }}>
@@ -77,29 +173,24 @@ export default function ImageUploader() {
         <Button
           mode="contained"
           onPress={takePhoto}
-          style={{
-            backgroundColor: "#37c534",
-            marginTop: 20,
-          }}
+          style={{ backgroundColor: "#37c534", marginTop: 20 }}
           icon={() => <Ionicons name="camera" size={20} color="white" />}
         >
           <Text style={{ fontWeight: "bold", color: "white" }}>Tomar Foto</Text>
         </Button>
+
+        {/* Botón destructivo (outlined) — antes "Cancelar análisis" */}
         {image && (
           <Button
-            mode="contained"
+            mode="outlined"
             onPress={resetImage}
-            style={{
-              backgroundColor: "red",
-              marginTop: 20,
-            }}
+            style={{ borderColor: "#c0392b", marginTop: 20 }}
+            textColor="#c0392b"
             icon={() => (
-              <Ionicons name="close-circle" size={20} color="white" />
+              <Ionicons name="trash-outline" size={20} color="#c0392b" />
             )}
           >
-            <Text style={{ fontWeight: "bold", color: "white" }}>
-              Cancelar análisis
-            </Text>
+            Quitar imagen
           </Button>
         )}
       </View>

@@ -3,50 +3,67 @@ import { View, Text } from "react-native";
 export default function ProgressBar({
   percentage,
   backgroundColor,
+  label,
+  borderColor,
 }: {
   percentage: number;
   backgroundColor: string;
+  label?: string; // etiqueta opcional sobre la barra
+  borderColor: string;
 }) {
   const finalPercentage = Math.min(Math.max(percentage * 100, 0), 100);
+  const displayText = `${parseFloat(finalPercentage.toFixed(1))}%`;
 
   return (
-    <View
-      style={{
-        height: 21,
-        backgroundColor: "#e0e0e0",
-        borderRadius: 6,
-        width: "80%",
-        marginBottom: 10,
-        flexDirection: "row",
-        gap: 5,
-        alignItems: "center",
-      }}
-    >
+    <View style={{ width: "80%", marginBottom: 12 }}>
+      {label && (
+        <Text style={{ fontSize: 12, color: "#555", marginBottom: 3 }}>
+          {label}
+        </Text>
+      )}
       <View
         style={{
-          width: `${finalPercentage}%`,
-          height: "100%",
-          backgroundColor: backgroundColor,
-          borderRadius: 6,
-          alignItems: "flex-end",
+          height: 28,
+          backgroundColor: "#e0e0e0",
+          borderWidth: 1,
+          borderColor: borderColor,
+          borderRadius: 8,
+          flexDirection: "row",
+          alignItems: "center",
+          overflow: "hidden",
         }}
       >
-        {finalPercentage >= 20 && (
-          <Text style={{ color: "white", fontWeight: "bold", paddingRight: 5 }}>
-            {parseFloat(finalPercentage.toFixed(2))}
+        <View
+          style={{
+            width: `${finalPercentage}%`,
+            height: "100%",
+            backgroundColor: backgroundColor,
+            borderRadius: 8,
+            justifyContent: "center",
+            alignItems: "flex-end",
+            paddingRight: finalPercentage >= 20 ? 6 : 0,
+          }}
+        >
+          {finalPercentage >= 20 && (
+            <Text style={{ color: "black", fontWeight: "bold", fontSize: 12 }}>
+              {displayText}
+            </Text>
+          )}
+        </View>
+        {/* % fuera de la barra cuando el valor es muy bajo */}
+        {finalPercentage < 20 && (
+          <Text
+            style={{
+              color: "#444",
+              fontWeight: "bold",
+              fontSize: 12,
+              marginLeft: 6,
+            }}
+          >
+            {displayText}
           </Text>
         )}
       </View>
-      {finalPercentage < 20 && (
-        <Text
-          style={{
-            color: "black",
-            fontWeight: "bold",
-          }}
-        >
-          {parseFloat(finalPercentage.toFixed(2))}%
-        </Text>
-      )}
     </View>
   );
 }
