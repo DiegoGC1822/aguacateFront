@@ -1,9 +1,9 @@
 import { useAuth } from "../../../presentation/viewmodel/useAuth";
-import { loginUseCase } from "../../../domain/loginUseCase";
+import { loginUseCase } from "../../../domain/useCases/loginUseCase";
 import { logout as logoutService } from "../../../data/services/authService";
 
 // Mock de casos de uso y servicios
-jest.mock("../../../domain/loginUseCase", () => ({
+jest.mock("../../../domain/useCases/loginUseCase", () => ({
   loginUseCase: jest.fn(),
 }));
 

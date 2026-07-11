@@ -4,7 +4,7 @@ import {
   validatePasswordRules,
   validateRegisterForm,
   registerUseCase,
-} from "../../domain/registerUseCase";
+} from "../../domain/useCases/registerUseCase";
 import { register } from "../../data/services/authService";
 
 // Mock del servicio de registro
@@ -76,7 +76,7 @@ describe("registerUseCase - Validaciones y Registro", () => {
     test("debe lanzar error de validación correspondiente si falla alguna regla", async () => {
       await expect(
         registerUseCase("", "Juan1234", "Juan1234", "Juan", "Perez")
-      ).rejects.toThrow("Ingrese email");
+      ).rejects.toThrow("Ingrese su email");
 
       await expect(
         registerUseCase("juan@test.com", "123", "123", "Juan", "Perez")

@@ -86,6 +86,7 @@ export default function LoginScreen() {
               Inicia Sesión
             </Text>
             <TextInput
+              testID="input-email"
               placeholder="Email"
               placeholderTextColor="black"
               left={<TextInput.Icon icon="email" color="#2c7a2c" />}
@@ -101,6 +102,7 @@ export default function LoginScreen() {
               }}
             />
             <TextInput
+              testID="input-password"
               placeholder="Contraseña"
               placeholderTextColor="black"
               secureTextEntry={!showPassword}
@@ -124,6 +126,7 @@ export default function LoginScreen() {
               }}
             />
             <Button
+              testID="btn-login"
               mode="contained"
               style={{
                 backgroundColor: "#2c7a2c",

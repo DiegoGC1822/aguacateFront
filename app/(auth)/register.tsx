@@ -100,6 +100,7 @@ export default function RegisterScreen() {
 
             {/* Email */}
             <TextInput
+              testID="input-email"
               placeholder="Email"
               placeholderTextColor="#888"
               left={<TextInput.Icon icon="email" color="#2c7a2c" />}
@@ -121,6 +122,7 @@ export default function RegisterScreen() {
 
             {/* Password */}
             <TextInput
+              testID="input-password"
               placeholder="Contraseña"
               placeholderTextColor="#888"
               secureTextEntry={!showPassword}
@@ -152,6 +154,7 @@ export default function RegisterScreen() {
 
             {/* Confirmar Password */}
             <TextInput
+              testID="input-password2"
               placeholder="Confirmar Contraseña"
               placeholderTextColor="#888"
               secureTextEntry={!showPassword2}
@@ -181,6 +184,7 @@ export default function RegisterScreen() {
 
             {/* Nombre */}
             <TextInput
+              testID="input-firstname"
               placeholder="Nombre"
               placeholderTextColor="#888"
               left={<TextInput.Icon icon="account" color="#2c7a2c" />}
@@ -202,6 +206,7 @@ export default function RegisterScreen() {
 
             {/* Apellido */}
             <TextInput
+              testID="input-lastname"
               placeholder="Apellido"
               placeholderTextColor="#888"
               left={<TextInput.Icon icon="account" color="#2c7a2c" />}
@@ -222,6 +227,7 @@ export default function RegisterScreen() {
             )}
 
             <Button
+              testID="btn-register"
               mode="contained"
               style={{
                 backgroundColor: "#2c7a2c",

@@ -5,7 +5,7 @@ import {
   validateChangePasswordForm,
   updateProfileUseCase,
   changePasswordUseCase,
-} from "../../domain/UploadUseCase";
+} from "../../domain/useCases/UploadUseCase";
 import { updateUserProfile, changePassword } from "../../data/services/authService";
 
 // Mock de servicios de autenticación
@@ -74,7 +74,7 @@ describe("UploadUseCase - Actualización de Perfil y Contraseña", () => {
   describe("changePasswordUseCase", () => {
     test("debe lanzar error si no se cumplen requisitos", async () => {
       await expect(changePasswordUseCase("", "NuevaContrasena1")).rejects.toThrow("Ingrese su contraseña");
-      await expect(changePasswordUseCase("Actual", "123")).rejects.toThrow("La contraseña debe tener al menos 8 caracteres");
+      await expect(changePasswordUseCase("Actual", "123")).rejects.toThrow("La nueva contraseña debe tener al menos 8 caracteres");
       expect(changePassword).not.toHaveBeenCalled();
     });
 
