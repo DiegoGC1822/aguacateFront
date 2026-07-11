@@ -196,6 +196,7 @@ export default function ImageUploader() {
         {/* Botón primario: Analizar (solo visible si hay imagen) */}
         {image && (
           <Button
+            testID="btn-analizar"
             mode="contained"
             onPress={handleAnalyze}
             style={{ backgroundColor: "#2c7a2c", marginTop: 20 }}
@@ -207,6 +208,7 @@ export default function ImageUploader() {
 
         {/* Botones secundarios */}
         <Button
+          testID="btn-cargar-imagen"
           mode="contained"
           onPress={handlePickImage}
           style={{ backgroundColor: "#37c534", marginTop: 20 }}

@@ -1,4 +1,4 @@
-import { loginUseCase } from "../../domain/loginUseCase";
+import { loginUseCase } from "../../domain/useCases/loginUseCase";
 import { login } from "../../data/services/authService";
 
 // Mock del servicio de autenticación
@@ -12,12 +12,12 @@ describe("loginUseCase - Casos de Uso de Inicio de Sesión", () => {
   });
 
   test("debe lanzar error si el email está vacío", async () => {
-    await expect(loginUseCase("", "123456")).rejects.toThrow("Ingrese email");
+    await expect(loginUseCase("", "123456")).rejects.toThrow("Ingrese su email");
     expect(login).not.toHaveBeenCalled();
   });
 
   test("debe lanzar error si la contraseña está vacía", async () => {
-    await expect(loginUseCase("test@test.com", "")).rejects.toThrow("Ingrese contraseña");
+    await expect(loginUseCase("test@test.com", "")).rejects.toThrow("Ingrese su contraseña");
     expect(login).not.toHaveBeenCalled();
   });
 
