@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "aguacateFront",
+    "name": "AvoCheck",
     "slug": "aguacateFront",
     "scheme": "aguacatefront",
     "version": "1.0.0",
@@ -28,7 +28,10 @@
     "web": {
       "favicon": "./assets/paltaReal.png"
     },
-    "plugins": ["expo-router", "expo-font"],
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
     "extra": {
       "router": {},
       "eas": {

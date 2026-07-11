@@ -270,10 +270,12 @@ export default function AnalysisResult() {
           marginTop: 20,
           width: "80%",
         }}
-        icon={() => <Ionicons name="document-text" size={20} color="black" />}
+        icon={() => <Ionicons name="document-text" size={20} color="white" />}
         onPress={exportToPDF}
       >
-        <Text style={{ fontWeight: "bold" }}>Exportar a pdf</Text>
+        <Text style={{ fontWeight: "bold", color: "white" }}>
+          Exportar a pdf
+        </Text>
       </Button>
       <Button
         mode="contained"
@@ -283,11 +285,13 @@ export default function AnalysisResult() {
           width: "80%",
         }}
         icon={() => (
-          <Ionicons name="arrow-undo-outline" size={20} color="black" />
+          <Ionicons name="arrow-undo-outline" size={20} color="white" />
         )}
         onPress={finishAnalysis}
       >
-        <Text style={{ fontWeight: "bold" }}>Volver al inicio</Text>
+        <Text style={{ fontWeight: "bold", color: "white" }}>
+          Volver al inicio
+        </Text>
       </Button>
     </View>
   );
