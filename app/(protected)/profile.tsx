@@ -11,7 +11,6 @@ import { isAppError, APP_ERROR_TITLES } from "../../domain/errors";
 import KeyboardAvoidingScreen from "../../presentation/components/KeyboardAvoidingScreen";
 
 export default function ProfileScreen() {
-  const { profile } = useAuth();
 
   const {
     firstName, setFirstName,
@@ -169,6 +168,7 @@ export default function ProfileScreen() {
                     paddingVertical: 3,
                   }}
                   onPress={handleChangePassword}
+                  textColor="white"
                   icon="lock-reset"
                 >
                   <Text style={{ color: "white", fontWeight: "bold" }}>
@@ -238,6 +238,7 @@ export default function ProfileScreen() {
                     marginTop: 10,
                     paddingVertical: 3,
                   }}
+                  textColor="white"
                   onPress={edit ? handleSave : () => setEdit(true)}
                   icon={edit ? "content-save" : "pencil"}
                 >
@@ -260,6 +261,7 @@ export default function ProfileScreen() {
                   mode="contained"
                   style={{ backgroundColor: "#b5651d", marginTop: 10, paddingVertical: 3 }}
                   onPress={() => setChangePassword(true)}
+                  textColor="white"
                   icon="lock-reset"
                 >
                   <Text style={{ color: "white", fontWeight: "bold" }}>

@@ -112,6 +112,7 @@ export default function LoginScreen() {
               textColor="black"
               right={
                 <TextInput.Icon
+                  color="gray"
                   icon={showPassword ? "eye-off" : "eye"}
                   onPress={() => setShowPassword(!showPassword)}
                 />

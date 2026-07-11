@@ -136,6 +136,7 @@ export default function RegisterScreen() {
               style={{ marginBottom: 4, borderRadius: 5, backgroundColor: "white" }}
               right={
                 <TextInput.Icon
+                  color="gray"
                   icon={showPassword ? "eye-off" : "eye"}
                   onPress={() => setShowPassword(!showPassword)}
                 />
@@ -166,6 +167,7 @@ export default function RegisterScreen() {
               style={{ marginBottom: 4, borderRadius: 5, backgroundColor: "white" }}
               right={
                 <TextInput.Icon
+                  color="gray"
                   icon={showPassword2 ? "eye-off" : "eye"}
                   onPress={() => setShowPassword2(!showPassword2)}
                 />

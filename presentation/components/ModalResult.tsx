@@ -68,7 +68,7 @@ export default function ModalResult({
           alignItems: "center",
         }}
       >
-        <Text>{fecha}</Text>
+        <Text style={{ color: "black" }}>{fecha}</Text>
         <Image
           source={{ uri: prediction.image }}
           style={{

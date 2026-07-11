@@ -153,7 +153,7 @@ export default function ImageUploader() {
               style={{ backgroundColor: "#2c7a2c", marginTop: 8 }}
               onPress={() => setShowGuide(false)}
             >
-              Entendido
+              <Text style={{ color: "white", fontWeight: "bold" }}>Entendido</Text>
             </Button>
           </View>
         </View>
