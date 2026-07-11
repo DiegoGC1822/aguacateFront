@@ -1,11 +1,14 @@
 import { TextInput, Button, Text } from "react-native-paper";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { useAuth } from "../../presentation/viewmodel/useAuth";
 import { RuleRow } from "../../presentation/components/RuleRow";
 import { RulesPanel } from "../../presentation/components/RulesPanel";
 import { useUploadProfile } from "../../presentation/viewmodel/useUploadProfile";
 import { useUploadPassword } from "../../presentation/viewmodel/useUploadPassword";
+import AppModal, { ModalType } from "../../presentation/components/AppModal";
+import { isAppError, APP_ERROR_TITLES } from "../../domain/errors";
+import KeyboardAvoidingScreen from "../../presentation/components/KeyboardAvoidingScreen";
 
 export default function ProfileScreen() {
   const { profile } = useAuth();
@@ -34,13 +37,29 @@ export default function ProfileScreen() {
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [password2Focused, setPassword2Focused] = useState(false);
 
+  const [modal, setModal] = useState<{
+    visible: boolean;
+    type: ModalType;
+    title: string;
+    message: string;
+  }>({ visible: false, type: "error", title: "", message: "" });
+
+  const showModal = (type: ModalType, title: string, message: string) =>
+    setModal({ visible: true, type, title, message });
+
+  const hideModal = () => setModal((prev) => ({ ...prev, visible: false }));
+
   const handleSave = async () => {
     try {
       await submitProfile();
       setEdit(false);
-      alert("Perfil actualizado correctamente");
+      showModal("success", "Perfil actualizado", "Tu perfil fue actualizado correctamente.");
     } catch (error: any) {
-      alert(error.message || "Error al actualizar el perfil");
+      if (isAppError(error)) {
+        showModal("error", APP_ERROR_TITLES[error.type], error.message);
+      } else {
+        showModal("error", "Error", "Ha ocurrido un error al actualizar el perfil.");
+      }
     }
   };
 
@@ -50,9 +69,13 @@ export default function ProfileScreen() {
       setChangePassword(false);
       setPassword("");
       setPassword2("");
-      alert("Contraseña cambiada correctamente");
+      showModal("success", "Contraseña actualizada", "Tu contraseña fue cambiada correctamente.");
     } catch (error: any) {
-      alert(error.message || "Error al cambiar la contraseña");
+      if (isAppError(error)) {
+        showModal("error", APP_ERROR_TITLES[error.type], error.message);
+      } else {
+        showModal("error", "Error", "Ha ocurrido un error al cambiar la contraseña.");
+      }
     }
   };
 
@@ -63,18 +86,8 @@ export default function ProfileScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: "#d7f4d7" }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          width: "100%",
-        }}
-      >
+    <>
+      <KeyboardAvoidingScreen>
         <View
           style={{
             paddingLeft: 80,
@@ -151,12 +164,11 @@ export default function ProfileScreen() {
                 <Button
                   mode="contained"
                   style={{
-                    backgroundColor: passwordValidation.isFormValid ? "#42e2ddff" : "#a5c8a5",
+                    backgroundColor: "#2c7a2c",
                     marginTop: 10,
                     paddingVertical: 3,
                   }}
                   onPress={handleChangePassword}
-                  disabled={!passwordValidation.isFormValid}
                   icon="lock-reset"
                 >
                   <Text style={{ color: "white", fontWeight: "bold" }}>
@@ -164,10 +176,10 @@ export default function ProfileScreen() {
                   </Text>
                 </Button>
                 <Button
-                  mode={passwordValidation.isFormValid ? "contained" : "outlined"}
-                  style={{ borderColor: "red", marginTop: 10, paddingVertical: 3, backgroundColor: passwordValidation.isFormValid ? "#42e2ddff" : "none" }}
-                  textColor={passwordValidation.isFormValid ? "white" : "red"}
+                  mode="outlined"
+                  style={{ borderColor: "red", marginTop: 10, paddingVertical: 3 }}
                   onPress={handleCancelPassword}
+                  textColor="red"
                   icon="close"
                 >
                   Cancelar
@@ -222,14 +234,11 @@ export default function ProfileScreen() {
                 <Button
                   mode="contained"
                   style={{
-                    backgroundColor: edit
-                      ? profileValidation.isFormValid ? "green" : "#a5c8a5"
-                      : "#2196F3",
+                    backgroundColor: "#2c7a2c",
                     marginTop: 10,
                     paddingVertical: 3,
                   }}
                   onPress={edit ? handleSave : () => setEdit(true)}
-                  disabled={edit && !profileValidation.isFormValid}
                   icon={edit ? "content-save" : "pencil"}
                 >
                   <Text style={{ color: "white", fontWeight: "bold" }}>
@@ -249,7 +258,7 @@ export default function ProfileScreen() {
                 )}
                 <Button
                   mode="contained"
-                  style={{ backgroundColor: "#42e2ddff", marginTop: 10, paddingVertical: 3 }}
+                  style={{ backgroundColor: "#b5651d", marginTop: 10, paddingVertical: 3 }}
                   onPress={() => setChangePassword(true)}
                   icon="lock-reset"
                 >
@@ -261,7 +270,16 @@ export default function ProfileScreen() {
             )}
           </View>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingScreen>
+
+      <AppModal
+        visible={modal.visible}
+        type={modal.type}
+        title={modal.title}
+        message={modal.message}
+        onDismiss={hideModal}
+        hasSidebar={true}
+      />
+    </>
   );
 }

@@ -1,4 +1,5 @@
-import { register } from "../data/services/authService";
+import { register } from "../../data/services/authService";
+import { AppError } from "../errors";
 
 export interface FieldValidation {
     hasValue: boolean;
@@ -117,16 +118,16 @@ export const registerUseCase = async (
     );
 
     if (!validation.isFormValid) {
-        if (!validation.email.hasValue) throw new Error("Ingrese email");
-        if (!validation.email.hasValidFormat) throw new Error("Email inválido");
-        if (!validation.password.hasMinLength) throw new Error("La contraseña debe tener al menos 8 caracteres");
-        if (!validation.password.hasUppercase) throw new Error("La contraseña debe tener al menos una mayúscula");
-        if (!validation.password.hasNumber) throw new Error("La contraseña debe tener al menos un número");
-        if (!validation.password.passwordsMatch) throw new Error("Las contraseñas no coinciden");
-        if (!validation.firstName.hasValue) throw new Error("Ingrese su nombre");
-        if (!validation.firstName.hasMinLength) throw new Error("El nombre debe tener al menos 4 caracteres");
-        if (!validation.lastName.hasValue) throw new Error("Ingrese su apellido");
-        if (!validation.lastName.hasMinLength) throw new Error("El apellido debe tener al menos 4 caracteres");
+        if (!validation.email.hasValue) throw new AppError("VALIDATION", "Ingrese su email");
+        if (!validation.email.hasValidFormat) throw new AppError("VALIDATION", "El formato del email no es válido");
+        if (!validation.password.hasMinLength) throw new AppError("VALIDATION", "La contraseña debe tener al menos 8 caracteres");
+        if (!validation.password.hasUppercase) throw new AppError("VALIDATION", "La contraseña debe tener al menos una mayúscula");
+        if (!validation.password.hasNumber) throw new AppError("VALIDATION", "La contraseña debe tener al menos un número");
+        if (!validation.password.passwordsMatch) throw new AppError("VALIDATION", "Las contraseñas no coinciden");
+        if (!validation.firstName.hasValue) throw new AppError("VALIDATION", "Ingrese su nombre");
+        if (!validation.firstName.hasMinLength) throw new AppError("VALIDATION", "El nombre debe tener al menos 4 caracteres");
+        if (!validation.lastName.hasValue) throw new AppError("VALIDATION", "Ingrese su apellido");
+        if (!validation.lastName.hasMinLength) throw new AppError("VALIDATION", "El apellido debe tener al menos 4 caracteres");
     }
 
     return await register(email, password, password2, first_name, last_name);

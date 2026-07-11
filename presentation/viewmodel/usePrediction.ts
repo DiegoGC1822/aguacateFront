@@ -5,6 +5,7 @@ import {
   getPredictionById,
 } from "../../data/services/predictionService";
 import { PredictionResponse, History } from "../../types";
+import { isAppError } from "../../domain/errors";
 
 interface PredictionState {
   prediction: PredictionResponse | null;
@@ -41,8 +42,12 @@ export const usePrediction = create<PredictionState>((set) => ({
       } else {
         startPolling(data.id, set);
       }
-    } catch (error) {
-      set({ error: "Error al analizar la imagen", loading: false });
+    } catch (error: any) {
+      if (isAppError(error)) {
+        set({ error: error.message, loading: false });
+      } else {
+        set({ error: error.response?.data?.detail || error.message || "Error al analizar la imagen", loading: false });
+      }
     }
   },
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { updateProfileUseCase, validateUpdateProfileForm } from "../../domain/UploadUseCase";
+import { updateProfileUseCase, validateUpdateProfileForm } from "../../domain/useCases/UploadUseCase";
 import { useAuth } from "./useAuth";
 
 export const useUploadProfile = () => {

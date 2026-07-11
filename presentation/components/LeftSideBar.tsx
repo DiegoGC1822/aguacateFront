@@ -10,10 +10,12 @@ import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAuth } from "../viewmodel/useAuth";
 import { Image } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function LeftSidebar() {
   const [expanded, setExpanded] = useState(false);
   const widthAnim = useRef(new Animated.Value(70)).current;
+  const insets = useSafeAreaInsets();
 
   const { logout } = useAuth();
 
@@ -45,7 +47,7 @@ export default function LeftSidebar() {
   };
 
   return (
-    <Animated.View style={[styles.sidebar, { width: widthAnim }]}>
+    <Animated.View style={[styles.sidebar, { width: widthAnim, paddingTop: insets.top > 0 ? insets.top + 10 : 30 }]}>
       {/* Toggle */}
       {expanded ? (
         <Image
@@ -119,7 +121,6 @@ const styles = StyleSheet.create({
     elevation: 10,
     backgroundColor: "#37c534",
     width: 70,
-    paddingTop: 50,
     alignItems: "center",
   },
   menuButton: {

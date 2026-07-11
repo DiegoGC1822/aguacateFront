@@ -1,9 +1,6 @@
 import {
   View,
   Text,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   Image,
 } from "react-native";
 import { TextInput, Button } from "react-native-paper";
@@ -12,6 +9,9 @@ import { useState } from "react";
 import { useRegisterForm } from "../../presentation/viewmodel/useRegisterForm";
 import { RuleRow } from "../../presentation/components/RuleRow";
 import { RulesPanel } from "../../presentation/components/RulesPanel";
+import AppModal from "../../presentation/components/AppModal";
+import { isAppError, APP_ERROR_TITLES } from "../../domain/errors";
+import KeyboardAvoidingScreen from "../../presentation/components/KeyboardAvoidingScreen";
 
 export default function RegisterScreen() {
   const {
@@ -33,27 +33,31 @@ export default function RegisterScreen() {
   const [firstNameFocused, setFirstNameFocused] = useState(false);
   const [lastNameFocused, setLastNameFocused] = useState(false);
 
+  const [modal, setModal] = useState<{
+    visible: boolean;
+    title: string;
+    message: string;
+  }>({ visible: false, title: "", message: "" });
+
+  const showErrorModal = (title: string, message: string) =>
+    setModal({ visible: true, title, message });
+
   const handleRegister = async () => {
     try {
       await submit();
       router.push("/login");
     } catch (error: any) {
-      alert(error.message || "Error al registrarse");
+      if (isAppError(error)) {
+        showErrorModal(APP_ERROR_TITLES[error.type], error.message);
+      } else {
+        showErrorModal("Error", "Ha ocurrido un error inesperado al registrarse.");
+      }
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: "#d7f4d7" }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+    <>
+      <KeyboardAvoidingScreen>
         <View
           style={{
             width: "80%",
@@ -218,12 +222,11 @@ export default function RegisterScreen() {
             <Button
               mode="contained"
               style={{
-                backgroundColor: validation.isFormValid ? "#2c7a2c" : "#a5c8a5",
+                backgroundColor: "#2c7a2c",
                 marginTop: 10,
                 paddingVertical: 3,
               }}
               onPress={handleRegister}
-              disabled={!validation.isFormValid}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>Regístrate</Text>
             </Button>
@@ -239,7 +242,15 @@ export default function RegisterScreen() {
             </Text>
           </View>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingScreen>
+
+      <AppModal
+        visible={modal.visible}
+        type="error"
+        title={modal.title}
+        message={modal.message}
+        onDismiss={() => setModal((prev) => ({ ...prev, visible: false }))}
+      />
+    </>
   );
 }

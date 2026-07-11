@@ -2,6 +2,7 @@ import { Redirect, Stack } from "expo-router";
 import { useAuth } from "../../presentation/viewmodel/useAuth";
 import { ActivityIndicator, View } from "react-native";
 import LeftSidebar from "../../presentation/components/LeftSideBar";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProtectedLayout() {
   const { isAuthenticated, isHydrated } = useAuth();
@@ -20,7 +21,9 @@ export default function ProtectedLayout() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Stack screenOptions={{ headerShown: false }} />
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#d7f4d7" }} edges={["top", "bottom"]}>
+        <Stack screenOptions={{ headerShown: false }} />
+      </SafeAreaView>
 
       <LeftSidebar />
     </View>

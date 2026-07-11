@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import {
   loginUseCase
-} from "../../domain/loginUseCase";
+} from "../../domain/useCases/loginUseCase";
 
 import {
   getUserProfile,

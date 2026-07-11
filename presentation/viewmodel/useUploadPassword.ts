@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { changePasswordUseCase, validateChangePasswordForm } from "../../domain/UploadUseCase";
+import { changePasswordUseCase, validateChangePasswordForm } from "../../domain/useCases/UploadUseCase";
 
 export const useUploadPassword = () => {
     const [password, setPassword] = useState("");

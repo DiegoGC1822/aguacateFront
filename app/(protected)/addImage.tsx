@@ -5,8 +5,9 @@ import { usePrediction } from "../../presentation/viewmodel/usePrediction";
 import { useImageUpload } from "../../presentation/viewmodel/useImageUpload";
 import { router } from "expo-router";
 import { useState } from "react";
+import AppToast, { ToastType } from "../../presentation/components/AppToast";
+import { isAppError } from "../../domain/errors";
 
-// ─── Sub-componente fila de guía ──────────────────────────────────────────────
 const GuideRow = ({
   icon,
   text,
@@ -33,6 +34,43 @@ export default function ImageUploader() {
   const { pickImage, takePhoto, image, resetImage } = useImageUpload();
   const { analyzeImage } = usePrediction();
   const [showGuide, setShowGuide] = useState(false);
+
+  const [toast, setToast] = useState<{
+    visible: boolean;
+    message: string;
+    type: ToastType;
+  }>({ visible: false, message: "", type: "info" });
+
+  const showToast = (message: string, type: ToastType) =>
+    setToast({ visible: true, message, type });
+
+  const hideToast = () => setToast((prev) => ({ ...prev, visible: false }));
+
+  const handlePickImage = async () => {
+    try {
+      await pickImage();
+      showToast("✅ Imagen cargada correctamente", "success");
+    } catch (error: any) {
+      if (isAppError(error) && error.type === "IMAGE_FORMAT") {
+        showToast(error.message, "error");
+      } else {
+        showToast("No se pudo cargar la imagen. Intenta de nuevo.", "error");
+      }
+    }
+  };
+
+  const handleTakePhoto = async () => {
+    try {
+      await takePhoto();
+      showToast("Foto tomada correctamente", "success");
+    } catch (error: any) {
+      if (isAppError(error) && error.type === "IMAGE_FORMAT") {
+        showToast(error.message, "error");
+      } else {
+        showToast("No se pudo tomar la foto. Intenta de nuevo.", "error");
+      }
+    }
+  };
 
   const handleAnalyze = () => {
     if (!image) return;
@@ -121,6 +159,14 @@ export default function ImageUploader() {
         </View>
       </Modal>
 
+      <AppToast
+        visible={toast.visible}
+        message={toast.message}
+        type={toast.type}
+        onDismiss={hideToast}
+        hasSidebar
+      />
+
       {/* Título */}
       <Text
         style={{
@@ -162,7 +208,7 @@ export default function ImageUploader() {
         {/* Botones secundarios */}
         <Button
           mode="contained"
-          onPress={pickImage}
+          onPress={handlePickImage}
           style={{ backgroundColor: "#37c534", marginTop: 20 }}
           icon={() => <Ionicons name="image" size={20} color="white" />}
         >
@@ -172,14 +218,14 @@ export default function ImageUploader() {
         </Button>
         <Button
           mode="contained"
-          onPress={takePhoto}
+          onPress={handleTakePhoto}
           style={{ backgroundColor: "#37c534", marginTop: 20 }}
           icon={() => <Ionicons name="camera" size={20} color="white" />}
         >
           <Text style={{ fontWeight: "bold", color: "white" }}>Tomar Foto</Text>
         </Button>
 
-        {/* Botón destructivo (outlined) — antes "Cancelar análisis" */}
+        {/* Botón destructivo (outlined) */}
         {image && (
           <Button
             mode="outlined"
@@ -194,6 +240,8 @@ export default function ImageUploader() {
           </Button>
         )}
       </View>
+
     </View>
   );
 }
+

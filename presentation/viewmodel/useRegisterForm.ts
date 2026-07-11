@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { registerUseCase, validateRegisterForm } from "../../domain/registerUseCase";
+import { registerUseCase, validateRegisterForm } from "../../domain/useCases/registerUseCase";
 
 export const useRegisterForm = () => {
     const [email, setEmail] = useState("");

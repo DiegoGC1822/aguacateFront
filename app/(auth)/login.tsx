@@ -1,15 +1,15 @@
 import {
   View,
   Text,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
 } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { router } from "expo-router";
 import { useState } from "react";
 import { useAuth } from "../../presentation/viewmodel/useAuth";
 import { Image } from "react-native";
+import AppModal from "../../presentation/components/AppModal";
+import { isAppError, APP_ERROR_TITLES } from "../../domain/errors";
+import KeyboardAvoidingScreen from "../../presentation/components/KeyboardAvoidingScreen";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -17,31 +17,31 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
 
+  const [modal, setModal] = useState<{
+    visible: boolean;
+    title: string;
+    message: string;
+  }>({ visible: false, title: "", message: "" });
+
+  const showErrorModal = (title: string, message: string) =>
+    setModal({ visible: true, title, message });
+
   const handleLogin = async () => {
     try {
       await login(email, password);
       router.push("/home");
     } catch (error: any) {
-      alert(
-        error.response?.data?.detail ||
-        error.message ||
-        "Error al iniciar sesión",
-      );
+      if (isAppError(error)) {
+        showErrorModal(APP_ERROR_TITLES[error.type], error.message);
+      } else {
+        showErrorModal("Error", "Ha ocurrido un error inesperado al iniciar sesión.");
+      }
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: "#d7f4d7" }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+    <>
+      <KeyboardAvoidingScreen>
         <View
           style={{
             width: "80%",
@@ -148,7 +148,15 @@ export default function LoginScreen() {
             </Text>
           </View>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingScreen>
+
+      <AppModal
+        visible={modal.visible}
+        type="error"
+        title={modal.title}
+        message={modal.message}
+        onDismiss={() => setModal((prev) => ({ ...prev, visible: false }))}
+      />
+    </>
   );
 }

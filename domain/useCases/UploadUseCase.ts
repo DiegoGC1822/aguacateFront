@@ -2,7 +2,8 @@ import {
   login,
   updateUserProfile,
   changePassword,
-} from "../data/services/authService";
+} from "../../data/services/authService";
+import { AppError } from "../errors";
 
 export interface FieldValidation {
   hasValue: boolean;
@@ -70,10 +71,10 @@ export const updateProfileUseCase = async (
   const validation = validateUpdateProfileForm(first_name, last_name);
 
   if (!validation.isFormValid) {
-    if (!validation.firstName.hasValue) throw new Error("Ingrese su nombre");
-    if (!validation.firstName.hasMinLength) throw new Error("El nombre debe tener al menos 4 caracteres");
-    if (!validation.lastName.hasValue) throw new Error("Ingrese su apellido");
-    if (!validation.lastName.hasMinLength) throw new Error("El apellido debe tener al menos 4 caracteres");
+    if (!validation.firstName.hasValue) throw new AppError("VALIDATION", "Ingrese su nombre");
+    if (!validation.firstName.hasMinLength) throw new AppError("VALIDATION", "El nombre debe tener al menos 4 caracteres");
+    if (!validation.lastName.hasValue) throw new AppError("VALIDATION", "Ingrese su apellido");
+    if (!validation.lastName.hasMinLength) throw new AppError("VALIDATION", "El apellido debe tener al menos 4 caracteres");
   }
   return await updateUserProfile(first_name, last_name);
 };
@@ -107,10 +108,10 @@ export const changePasswordUseCase = async (
   const validation = validateChangePasswordForm(password, password2);
 
   if (!validation.isFormValid) {
-    if (!validation.password.hasValue) throw new Error("Ingrese su contraseña");
-    if (!validation.password2.hasMinLength) throw new Error("La contraseña debe tener al menos 8 caracteres");
-    if (!validation.password2.hasUppercase) throw new Error("La contraseña debe tener al menos una mayúscula");
-    if (!validation.password2.hasNumber) throw new Error("La contraseña debe tener al menos un número");
+    if (!validation.password.hasValue) throw new AppError("VALIDATION", "Ingrese su contraseña actual");
+    if (!validation.password2.hasMinLength) throw new AppError("VALIDATION", "La nueva contraseña debe tener al menos 8 caracteres");
+    if (!validation.password2.hasUppercase) throw new AppError("VALIDATION", "La nueva contraseña debe tener al menos una mayúscula");
+    if (!validation.password2.hasNumber) throw new AppError("VALIDATION", "La nueva contraseña debe tener al menos un número");
   }
   return await changePassword(password, password2);
 };

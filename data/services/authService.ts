@@ -1,6 +1,66 @@
 import { authResponse } from "../../types";
 import api from "../api/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AppError } from "../../domain/errors";
+
+const mapAxiosError = (error: any): AppError => {
+  const status: number | undefined = error.response?.status;
+  const rawData = error.response?.data;
+  if (!error.response) {
+    return new AppError(
+      "NETWORK",
+      "Sin conexión. Verifica tu red e intenta de nuevo.",
+    );
+  }
+
+  const serverMessage: string | undefined =
+    typeof rawData === "string"
+      ? rawData
+      : rawData?.detail ||
+      rawData?.message ||
+      rawData?.non_field_errors?.[0] ||
+      Object.values(rawData ?? {})?.[0]?.toString();
+
+  switch (status) {
+    case 400:
+      return new AppError(
+        "VALIDATION",
+        serverMessage || "Los datos ingresados no son válidos.",
+      );
+    case 401:
+      return new AppError(
+        "AUTH",
+        "Credenciales inválidas. Verifica tu email y contraseña.",
+      );
+    case 403:
+      return new AppError(
+        "AUTH",
+        serverMessage || "No tienes permisos para realizar esta acción.",
+      );
+    case 404:
+      return new AppError(
+        "AUTH",
+        serverMessage || "Usuario no encontrado.",
+      );
+    case 409:
+      return new AppError(
+        "AUTH",
+        serverMessage || "Este email ya está registrado.",
+      );
+    default:
+      if (status !== undefined && status >= 500) {
+        return new AppError(
+          "SERVER",
+          serverMessage || "Error en el servidor. Intenta más tarde.",
+        );
+      }
+      return new AppError(
+        "SERVER",
+        serverMessage || error.message || "Ha ocurrido un error inesperado.",
+      );
+  }
+};
+
 
 export const login = async (
   email: string,
@@ -15,7 +75,7 @@ export const login = async (
     return response.data;
   } catch (error: any) {
     console.log("Error during login:", error.response?.data || error.message);
-    throw error;
+    throw mapAxiosError(error);
   }
 };
 
@@ -28,7 +88,7 @@ export const getUserProfile = async () => {
       "Error fetching user profile:",
       error.response?.data || error.message,
     );
-    throw error;
+    throw mapAxiosError(error);
   }
 };
 
@@ -50,8 +110,8 @@ export const updateUserProfile = async (
     const response = await api.patch("/auth/profile/", data);
     return response.data;
   } catch (error: any) {
-    console.error("Error updating user profile:", error.message);
-    throw error;
+    console.error("Error updating user profile:", error.response?.data || error.message);
+    throw mapAxiosError(error);
   }
 };
 
@@ -66,8 +126,8 @@ export const changePassword = async (
     });
     return response.data;
   } catch (error: any) {
-    console.error("Error changing password:", error.message);
-    throw error;
+    console.error("Error changing password:", error.response?.data || error.message);
+    throw mapAxiosError(error);
   }
 };
 
@@ -79,13 +139,6 @@ export const register = async (
   last_name: string,
 ) => {
   try {
-    console.log("Registering user with data:", {
-      email,
-      password,
-      password2,
-      first_name,
-      last_name,
-    });
     const response = await api.post("/auth/register/", {
       email,
       password,
@@ -95,8 +148,8 @@ export const register = async (
     });
     return response.data;
   } catch (error: any) {
-    console.error("Error during registration:", error.message);
-    throw error;
+    console.error("Error during registration:", error.response?.data || error.message);
+    throw mapAxiosError(error);
   }
 };
 
@@ -109,8 +162,8 @@ export const refreshToken = async (
     });
     return response.data;
   } catch (error: any) {
-    console.error("Error refreshing token:", error.message);
-    throw error;
+    console.error("Error refreshing token:", error.response?.data || error.message);
+    throw mapAxiosError(error);
   }
 };
 
@@ -122,3 +175,4 @@ export const logout = async () => {
     throw error;
   }
 };
+

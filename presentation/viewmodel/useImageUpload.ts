@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import * as ImagePicker from "expo-image-picker";
+import { validateImageFormatUseCase } from "../../domain/useCases/imageUseCase";
 
 interface ImageState {
   image: string | null;
@@ -11,6 +12,7 @@ interface ImageState {
 export const useImageUpload = create<ImageState>((set) => ({
   image: null,
   resetImage: () => set({ image: null }),
+
   pickImage: async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: "images",
@@ -18,9 +20,12 @@ export const useImageUpload = create<ImageState>((set) => ({
     });
 
     if (!result.canceled) {
-      set({ image: result.assets[0].uri });
+      const uri = result.assets[0].uri;
+      validateImageFormatUseCase(uri);
+      set({ image: uri });
     }
   },
+
   takePhoto: async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
@@ -35,7 +40,10 @@ export const useImageUpload = create<ImageState>((set) => ({
     });
 
     if (!result.canceled) {
-      set({ image: result.assets[0].uri });
+      const uri = result.assets[0].uri;
+      validateImageFormatUseCase(uri);
+      set({ image: uri });
     }
   },
 }));
+
