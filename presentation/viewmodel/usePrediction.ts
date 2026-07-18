@@ -3,18 +3,52 @@ import {
   postPrediction,
   getPredictions,
   getPredictionById,
+  updateClassificationMetadata,
 } from "../../data/services/predictionService";
-import { PredictionResponse, History } from "../../types";
-import { isAppError } from "../../domain/errors";
+import { PredictionResponse, History, BatchImage } from "../../types";
+import { isAppError, AppError } from "../../domain/errors";
+import { executeBatchProcessing } from "../../domain/useCases/batchUseCase";
+
+// ---------------------------------------------------------------------------
+// Tipos internos del Store
+// ---------------------------------------------------------------------------
 
 interface PredictionState {
+  // --- Estado de predicción individual ---
   prediction: PredictionResponse | null;
   history: History | null;
   loading: boolean;
   error: string | null;
   analyzeImage: (ImageUri: string) => Promise<void>;
   getHistory: () => Promise<void>;
+
+  // --- Estado del lote ---
+  batchName: string;
+  batchDescription: string;
+  batchImages: BatchImage[];
+  isAnalyzingBatch: boolean;
+
+  // --- Acciones del lote ---
+  setBatchConfig: (name: string, description: string) => void;
+  addBatchImage: (uri: string) => void;
+  removeBatchImage: (id: string) => void;
+  updateImageMetadata: (
+    id: string,
+    metadata: { treeId?: string; coorNorte?: string; coorEste?: string }
+  ) => void;
+  clearBatch: () => void;
+  executeBatchAnalysis: () => Promise<void>;
+  updateClassificationOnServer: (
+    imageId: string,
+    treeId: string,
+    coorNorte: string,
+    coorEste: string
+  ) => Promise<void>;
 }
+
+// ---------------------------------------------------------------------------
+// Polling helpers (predicción individual)
+// ---------------------------------------------------------------------------
 
 let pollingInterval: ReturnType<typeof setInterval> | null = null;
 let pollingAttempts = 0;
@@ -24,7 +58,12 @@ const POLL_INTERVAL_MS = 3000;
 const isFinalStatus = (status: string) =>
   status !== "pending" && status !== "processing";
 
-export const usePrediction = create<PredictionState>((set) => ({
+// ---------------------------------------------------------------------------
+// Store
+// ---------------------------------------------------------------------------
+
+export const usePrediction = create<PredictionState>((set, get) => ({
+  // ===================== Estado individual =====================
   prediction: null,
   history: null,
   loading: false,
@@ -46,7 +85,13 @@ export const usePrediction = create<PredictionState>((set) => ({
       if (isAppError(error)) {
         set({ error: error.message, loading: false });
       } else {
-        set({ error: error.response?.data?.detail || error.message || "Error al analizar la imagen", loading: false });
+        set({
+          error:
+            error.response?.data?.detail ||
+            error.message ||
+            "Error al analizar la imagen",
+          loading: false,
+        });
       }
     }
   },
@@ -63,7 +108,116 @@ export const usePrediction = create<PredictionState>((set) => ({
       });
     }
   },
+
+  // ===================== Estado del lote =====================
+  batchName: "",
+  batchDescription: "",
+  batchImages: [],
+  isAnalyzingBatch: false,
+
+  // ===================== Acciones del lote =====================
+
+  setBatchConfig: (name: string, description: string) => {
+    set({ batchName: name, batchDescription: description });
+  },
+
+  addBatchImage: (uri: string) => {
+    const newImage: BatchImage = {
+      id: Date.now().toString(),
+      uri,
+      treeId: "",
+      coorNorte: "",
+      coorEste: "",
+    };
+    set((state) => ({ batchImages: [...state.batchImages, newImage] }));
+  },
+
+  removeBatchImage: (id: string) => {
+    set((state) => ({
+      batchImages: state.batchImages.filter((img) => img.id !== id),
+    }));
+  },
+
+  updateImageMetadata: (
+    id: string,
+    metadata: { treeId?: string; coorNorte?: string; coorEste?: string }
+  ) => {
+    set((state) => ({
+      batchImages: state.batchImages.map((img) =>
+        img.id === id ? { ...img, ...metadata } : img
+      ),
+    }));
+  },
+
+  clearBatch: () => {
+    set({
+      batchName: "",
+      batchDescription: "",
+      batchImages: [],
+      isAnalyzingBatch: false,
+    });
+  },
+
+  executeBatchAnalysis: async () => {
+    set({ isAnalyzingBatch: true, error: null });
+
+    try {
+      const { batchName, batchDescription, batchImages } = get();
+      const imageUris = batchImages.map((img) => img.uri);
+      
+      const classifications = await executeBatchProcessing(batchName, batchDescription, imageUris);
+
+      // Mapear los resultados preservando la URI local.
+      // Se asume que classifications vuelve en el mismo orden o podemos inyectarlo posicionalmente
+      const analyzedImages = batchImages.map((img, index) => ({
+        ...img,
+        prediction: classifications[index],
+      }));
+
+      set({ batchImages: analyzedImages, isAnalyzingBatch: false });
+    } catch (error: any) {
+      if (isAppError(error)) {
+        set({ error: error.message, isAnalyzingBatch: false });
+      } else {
+        set({ error: "Error inesperado al analizar el lote", isAnalyzingBatch: false });
+      }
+      throw error;
+    }
+  },
+
+  updateClassificationOnServer: async (
+    imageId: string,
+    treeId: string,
+    coorNorte: string,
+    coorEste: string
+  ) => {
+    const state = get();
+    const image = state.batchImages.find((img) => img.id === imageId);
+
+    if (!image || !image.prediction) return;
+
+    try {
+      const parsedNorte = parseFloat(coorNorte) || 0;
+      const parsedEste = parseFloat(coorEste) || 0;
+
+      await updateClassificationMetadata(image.prediction.id, treeId, parsedNorte, parsedEste);
+
+      // Actualización optimista o posterior en el store
+      set((prev) => ({
+        batchImages: prev.batchImages.map((img) =>
+          img.id === imageId ? { ...img, treeId, coorNorte, coorEste } : img
+        ),
+      }));
+    } catch (error) {
+      console.error("Error al actualizar la metadata:", error);
+      throw error; // Se relanza para la UI
+    }
+  },
 }));
+
+// ---------------------------------------------------------------------------
+// Funciones de polling (fuera del store para evitar dependencias circulares)
+// ---------------------------------------------------------------------------
 
 function startPolling(
   id: number,

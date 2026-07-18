@@ -15,7 +15,7 @@ export default function AnalysisResult() {
 
   const finishAnalysis = () => {
     resetImage();
-    router.push("/addImage");
+    router.push("/Analysis");
   };
 
   console.log(

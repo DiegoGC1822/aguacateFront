@@ -6,12 +6,14 @@ interface CardResultProps {
   prediction: PredictionResponse;
   setShowDetails: Dispatch<SetStateAction<boolean>>;
   setSelectPrediction: Dispatch<SetStateAction<any>>;
+  onEdit?: (prediction: PredictionResponse) => void;
 }
 
 export default function CardResult({
   prediction,
   setShowDetails,
   setSelectPrediction,
+  onEdit,
 }: CardResultProps) {
   let color = { backgroundColor: "#c4c4c4", borderColor: "#c4c4c4" };
   let fecha;
@@ -102,6 +104,22 @@ export default function CardResult({
               Ver detalle
             </Text>
           </TouchableOpacity>
+          {onEdit && prediction.predicted_category_display !== "Saludable" && (
+            <TouchableOpacity
+              style={{ backgroundColor: "#e67e22", padding: 2, borderRadius: 4, marginTop: 5 }}
+              onPress={() => onEdit(prediction)}
+            >
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: "white",
+                  fontWeight: "bold",
+                }}
+              >
+                Editar
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>

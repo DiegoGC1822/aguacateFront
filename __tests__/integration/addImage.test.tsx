@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react-nativ
 import { PaperProvider } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import AddImageScreen from "../../app/(protected)/addImage";
+import AddImageScreen from "../../app/(protected)/Analysis";
 import { useImageUpload } from "../../presentation/viewmodel/useImageUpload";
 import { usePrediction } from "../../presentation/viewmodel/usePrediction";
 

@@ -1,6 +1,6 @@
 import { PredictionResponse } from "../../types";
 import { Modal, Text, Button } from "react-native-paper";
-import { View, Image } from "react-native";
+import { View, Image, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ProgressBar from "./ProgressBar";
 import { analysisHTML } from "../../templates/reportHtml";
@@ -58,13 +58,12 @@ export default function ModalResult({
         marginRight: 10,
       }}
     >
-      <View
-        style={{
+      <ScrollView
+        contentContainerStyle={{
           marginVertical: 20,
           gap: 10,
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
           alignItems: "center",
         }}
       >
@@ -77,6 +76,35 @@ export default function ModalResult({
             borderRadius: 10,
           }}
         />
+
+        {prediction.predicted_category_display !== "Saludable" && (
+          <View style={{ width: "100%", alignItems: "center", marginTop: 5, gap: 5 }}>
+            {prediction.lot_name && (
+              <View style={{ backgroundColor: "#34495e", paddingHorizontal: 15, paddingVertical: 5, borderRadius: 15 }}>
+                <Text style={{ color: "white", fontWeight: "bold", fontSize: 14 }}>
+                  Lote: {prediction.lot_name}
+                </Text>
+              </View>
+            )}
+            {prediction.tree_code && (
+              <View style={{ backgroundColor: "#2c7a2c", paddingHorizontal: 15, paddingVertical: 5, borderRadius: 15, flexDirection: "row", alignItems: "center", gap: 5 }}>
+                <Ionicons name="leaf" size={16} color="white" />
+                <Text style={{ color: "white", fontWeight: "bold", fontSize: 14 }}>
+                  Árbol: {prediction.tree_code}
+                </Text>
+              </View>
+            )}
+            {prediction.north_coordinate != null && prediction.east_coordinate != null && (
+              <View style={{ backgroundColor: "#ecf0f1", paddingHorizontal: 15, paddingVertical: 5, borderRadius: 15, borderWidth: 1, borderColor: "#bdc3c7", flexDirection: "row", alignItems: "center", gap: 5 }}>
+                <Ionicons name="location" size={16} color="#7f8c8d" />
+                <Text style={{ color: "#2c3e50", fontWeight: "bold", fontSize: 14 }}>
+                  UTM: N {prediction.north_coordinate} m | E {prediction.east_coordinate} m
+                </Text>
+              </View>
+            )}
+          </View>
+        )}
+
         <View
           style={{
             flexDirection: "row",
@@ -125,38 +153,38 @@ export default function ModalResult({
             Saludable
           </Text>
         </View>
-        <View>
-          <Button
-            mode="contained"
-            style={{
-              backgroundColor: "#2D2C7A",
-              marginTop: 15,
-            }}
-            icon={() => (
-              <Ionicons name="document-text" size={20} color="black" />
-            )}
-            onPress={exportToPDF}
-          >
-            <Text style={{ fontWeight: "bold", color: "white" }}>
-              Exportar a pdf
-            </Text>
-          </Button>
-          <Button
-            mode="contained"
-            style={{
-              backgroundColor: "#FFAA00",
-              marginTop: 15,
-            }}
-            icon={() => (
-              <Ionicons name="arrow-undo-outline" size={20} color="black" />
-            )}
-            onPress={() => setShowDetails(false)}
-          >
-            <Text style={{ fontWeight: "bold", color: "white" }}>
-              Regresar al historial
-            </Text>
-          </Button>
-        </View>
+      </ScrollView>
+      <View>
+        <Button
+          mode="contained"
+          style={{
+            backgroundColor: "#2D2C7A",
+            marginTop: 15,
+          }}
+          icon={() => (
+            <Ionicons name="document-text" size={20} color="black" />
+          )}
+          onPress={exportToPDF}
+        >
+          <Text style={{ fontWeight: "bold", color: "white" }}>
+            Exportar a pdf
+          </Text>
+        </Button>
+        <Button
+          mode="contained"
+          style={{
+            backgroundColor: "#FFAA00",
+            marginTop: 15,
+          }}
+          icon={() => (
+            <Ionicons name="arrow-undo-outline" size={20} color="black" />
+          )}
+          onPress={() => setShowDetails(false)}
+        >
+          <Text style={{ fontWeight: "bold", color: "white" }}>
+            Regresar al historial
+          </Text>
+        </Button>
       </View>
     </Modal>
   );

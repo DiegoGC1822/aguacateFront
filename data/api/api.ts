@@ -3,7 +3,7 @@ import { refreshToken } from "../services/authService";
 import { useAuth } from "../../presentation/viewmodel/useAuth";
 
 const api = axios.create({
-  baseURL: "https://avoclassifier-api.onrender.com/api",
+  baseURL: "http://192.168.1.34:8000/api",
 });
 
 api.interceptors.request.use((config) => {

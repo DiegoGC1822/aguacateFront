@@ -5,8 +5,8 @@ import { validateImageFormatUseCase } from "../../domain/useCases/imageUseCase";
 interface ImageState {
   image: string | null;
   resetImage: () => void;
-  pickImage: () => Promise<void>;
-  takePhoto: () => Promise<void>;
+  pickImage: () => Promise<string | null>;
+  takePhoto: () => Promise<string | null>;
 }
 
 export const useImageUpload = create<ImageState>((set) => ({
@@ -23,14 +23,16 @@ export const useImageUpload = create<ImageState>((set) => ({
       const uri = result.assets[0].uri;
       validateImageFormatUseCase(uri);
       set({ image: uri });
+      return uri;
     }
+    return null;
   },
 
   takePhoto: async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
       console.warn("Permisos de cámara denegados");
-      return;
+      return null;
     }
 
     const result = await ImagePicker.launchCameraAsync({
@@ -43,7 +45,9 @@ export const useImageUpload = create<ImageState>((set) => ({
       const uri = result.assets[0].uri;
       validateImageFormatUseCase(uri);
       set({ image: uri });
+      return uri;
     }
+    return null;
   },
 }));
 

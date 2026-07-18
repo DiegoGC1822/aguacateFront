@@ -83,7 +83,7 @@ export default function LeftSidebar() {
 
             <TouchableOpacity
               style={styles.item}
-              onPress={() => go("/addImage")}
+              onPress={() => go("/Analysis")}
             >
               <Ionicons name="camera" size={20} color="white" />
               <Text style={styles.text}>Analizar Imagen</Text>
