@@ -18,7 +18,7 @@ export const executeBatchProcessing = async (
 
   try {
     // 2. Cargar las imágenes
-    const classifications = await uploadBulk(lotId, imageUris);
+    const classifications = await uploadBulk(lotId!, imageUris);
     return classifications;
   } catch (error: any) {
     // 3. Rollback en caso de error en la carga masiva
